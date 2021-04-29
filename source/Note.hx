@@ -190,16 +190,18 @@ class Note extends FlxSprite
 		if (mustPress)
 		{	
 
-			if(PlayState.auto){
+			if(strumTime-300 <= Conductor.songPosition){
 
 				if(PlayState.playerdance){
 					PlayState.playerdance = false;
 
 				}
+			
 				if(PlayState.bfstartdancin.active){
 					PlayState.bfstartdancin.active = false;
 
 				}
+				
 			}
 			
 

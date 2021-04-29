@@ -919,6 +919,7 @@ class PlayState extends MusicBeatState
 		add(autoTxt);
 
 		dadstartdancin = new FlxTimer();
+		bfstartdancin = new FlxTimer();
 		
 
 		var doof:DialogueBox = new DialogueBox(false, dialogue);
@@ -2148,7 +2149,7 @@ class PlayState extends MusicBeatState
 					auto = true;
 					FlxTween.tween(autoTxt, {alpha: .4}, 1, {ease: FlxEase.quartInOut});
 					trace("auto");
-					bfstartdancin = new FlxTimer();
+					
 				}else{
 					auto = false;
 					FlxTween.tween(autoTxt, {alpha: 0}, 1, {ease: FlxEase.quartInOut});
@@ -2560,15 +2561,22 @@ class PlayState extends MusicBeatState
 						daNote.active = true;
 					}
 
-					if(daNote.mustPress && auto && daNote.wasGoodHit){
+					if(daNote.mustPress){
 						
-						if(!bfstartdancin.active && auto){
-							bfstartdancin.start(.6, function(bfstartdancin:FlxTimer){
-								playerdance=true; }, 1);
+						if(!bfstartdancin.active && !auto){
+							bfstartdancin.start(1.5, function(bfstartdancin:FlxTimer){
+							playerdance=true; }, 1);
 						}
+						
 
-						daNote.wasGoodHit = false;
-						goodNoteHit(daNote);
+						if(auto && daNote.wasGoodHit){
+							daNote.wasGoodHit = false;
+							if(!bfstartdancin.active){
+								bfstartdancin.start(.6, function(bfstartdancin:FlxTimer){
+								playerdance=true; }, 1);
+							}
+							goodNoteHit(daNote);
+						}
 
 					}
 
@@ -3623,15 +3631,16 @@ class PlayState extends MusicBeatState
 								if (upP && spr.animation.curAnim.name != 'confirm' && !loadRep)
 								{
 									spr.animation.play('pressed');
-									
-									if(FlxG.save.data.dif == 1){
-											clickMiss(2);
-									}
-					
-									if(FlxG.save.data.dif == 3){
+									if(!playerdance){
+										if(FlxG.save.data.dif == 1){
+												clickMiss(2);
+										}
 						
-										health -= 2;
+										if(FlxG.save.data.dif == 3){
+							
+											health -= 2;
 
+										}
 									}
 									
 								}
@@ -3658,14 +3667,16 @@ class PlayState extends MusicBeatState
 							{
 								if (rightP && spr.animation.curAnim.name != 'confirm' && !loadRep){
 									spr.animation.play('pressed');
-									if(FlxG.save.data.dif == 1){
-										clickMiss(3);
-									}
-			
-									if(FlxG.save.data.dif == 3){
+									if(!playerdance){
+										if(FlxG.save.data.dif == 1){
+											clickMiss(3);
+										}
 				
-										health -= 2;
-								
+										if(FlxG.save.data.dif == 3){
+					
+											health -= 2;
+									
+										}
 									}
 								}
 								if (rightR)
@@ -3693,16 +3704,17 @@ class PlayState extends MusicBeatState
 
 
 									spr.animation.play('pressed');
-
-									if(FlxG.save.data.dif == 1){
-										clickMiss(1);
-								}
-				
-								if(FlxG.save.data.dif == 3){
+									if(!playerdance){
+										if(FlxG.save.data.dif == 1){
+											clickMiss(1);
+										}
 					
-									health -= 2;
-									
-								}
+										if(FlxG.save.data.dif == 3){
+						
+											health -= 2;
+										
+										}
+									}
 								
 								
 								}
@@ -3730,15 +3742,17 @@ class PlayState extends MusicBeatState
 								if (leftP && spr.animation.curAnim.name != 'confirm' && !loadRep){
 
 									spr.animation.play('pressed');
-									if(FlxG.save.data.dif == 1){
-										clickMiss(0);
-								}
-				
-								if(FlxG.save.data.dif == 3){
+									if(!playerdance){
+										if(FlxG.save.data.dif == 1){
+											clickMiss(0);
+										}
 					
-									health -= 2;
-									
-								}
+										if(FlxG.save.data.dif == 3){
+						
+											health -= 2;
+										
+										}
+									}
 								
 								}
 								if (leftR)
