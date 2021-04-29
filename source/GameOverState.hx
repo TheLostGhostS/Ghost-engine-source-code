@@ -13,6 +13,8 @@ class GameOverState extends FlxTransitionableState
 	var bfX:Float = 0;
 	var bfY:Float = 0;
 
+	var percentage:Int = PlayState.percentage;
+
 	public function new(x:Float, y:Float)
 	{
 		super();
@@ -34,6 +36,11 @@ class GameOverState extends FlxTransitionableState
 		// bf.scrollFactor.set();
 		add(bf);
 		bf.playAnim('firstDeath');
+
+
+		
+
+
 
 		FlxG.camera.follow(bf, LOCKON, 0.001);
 		/* 

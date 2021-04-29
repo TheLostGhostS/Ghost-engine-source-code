@@ -443,7 +443,9 @@ class PauseMode extends Option
 
 	public override function press():Bool
 	{
-		FlxG.autoPause = !FlxG.autoPause;
+		FlxG.save.data.autopause = !FlxG.save.data.autopause;
+		FlxG.autoPause = FlxG.save.data.autopause;
+		
 		display = updateDisplay();
 		return true;
 	}

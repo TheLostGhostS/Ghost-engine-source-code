@@ -11,6 +11,9 @@ class GhostImprovedKadeEngineData
 		if(FlxG.save.data.dif == null)
 			FlxG.save.data.dif = 2;
 
+		if(FlxG.save.data.autopause == null)
+			FlxG.save.data.autopause = false;
+
 		if (FlxG.save.data.practice== null)
 			FlxG.save.data.practice = false;
 

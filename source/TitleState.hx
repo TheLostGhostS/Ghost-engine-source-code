@@ -106,6 +106,9 @@ class TitleState extends MusicBeatState
 				StoryMenuState.weekUnlocked[0] = true;
 		}
 
+		FlxG.save.data.autopause = !FlxG.save.data.autopause;
+		FlxG.autoPause = FlxG.save.data.autopause;
+
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());
 		#elseif CHARTING

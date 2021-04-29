@@ -223,6 +223,7 @@ class PlayState extends MusicBeatState
 
 	private var autoTxt:Alphabet;
 	
+	public static var percentage:Int;
 
 	public var focus = false;
 		// LUA SHIT
@@ -2150,8 +2151,13 @@ class PlayState extends MusicBeatState
 					bfstartdancin = new FlxTimer();
 				}else{
 					auto = false;
-					autoTxt.alpha = 0;
+					FlxTween.tween(autoTxt, {alpha: 0}, 1, {ease: FlxEase.quartInOut});
+
+					#if !debug
+
 					FlxG.resetState();
+
+					#end
 				}
 
 			}
@@ -2425,7 +2431,7 @@ class PlayState extends MusicBeatState
 
 		}
 
-		
+		percentage = Std.int( (songTime/songLength)*100);
 
 
 		FlxG.watch.addQuick("beatShit", curBeat);
@@ -2504,12 +2510,12 @@ class PlayState extends MusicBeatState
 
 		for(i in 0...8){
 			if(strumLineNotes.members[i] != null){
-				if(strumLineNotes.members[i].angle != angle[i]){
+				if(strumLineNotes.members[i].angle != angle[i] && strumLineNotes.members[i].animation.curAnim.name != "confirm"){
 
 					strumLineNotes.members[i].angle = angle[i];
 
 				}
-				if(strumLineNotes.members[i].animation.curAnim.name == "confirm" && curStage != "school" && curStage != "schoolEvil"){
+				if(strumLineNotes.members[i].animation.curAnim.name == "confirm" && curStage != "school" && curStage != "schoolEvil" && strumLineNotes.members[i].angle != 0){
 
 					strumLineNotes.members[i].angle = 0;
 
@@ -2557,7 +2563,7 @@ class PlayState extends MusicBeatState
 					if(daNote.mustPress && auto && daNote.wasGoodHit){
 						
 						if(!bfstartdancin.active && auto){
-							bfstartdancin.start(.5, function(bfstartdancin:FlxTimer){
+							bfstartdancin.start(.6, function(bfstartdancin:FlxTimer){
 								playerdance=true; }, 1);
 						}
 
@@ -2569,7 +2575,7 @@ class PlayState extends MusicBeatState
 					if (!daNote.mustPress && daNote.wasGoodHit)
 					{	
 						if(!dadstartdancin.active){
-							dadstartdancin.start(.5, function(dadstartdancin:FlxTimer){
+							dadstartdancin.start(.6, function(dadstartdancin:FlxTimer){
 								daddance=true; }, 1);
 						}
 						
@@ -2782,7 +2788,6 @@ class PlayState extends MusicBeatState
 
 				}
 
-					//
 
 				if(playerStrums.members[0] != null && playerStrums.members[1] != null && playerStrums.members[2] != null && playerStrums.members[3] != null)
 				{
@@ -2790,34 +2795,38 @@ class PlayState extends MusicBeatState
 					{
 						playerStrums.members[1].animation.play('static');
 						playerStrums.members[1].centerOffsets();
-							
-							
+								
+								
 					}
-					
+						
 					if (!boyfriend.animation.curAnim.name.startsWith("singUP") && auto)
 					{
 						playerStrums.members[2].animation.play('static');
 						playerStrums.members[2].centerOffsets();
 								
-								
+									
 					}
-					
+						
 					if (!boyfriend.animation.curAnim.name.startsWith("singRIGHT") && auto)
 					{
 						playerStrums.members[3].animation.play('static');
 						playerStrums.members[3].centerOffsets();
-								
-								
+									
+									
 					}
 	
 					if (!boyfriend.animation.curAnim.name.startsWith("singLEFT") && auto)
 					{
 						playerStrums.members[0].animation.play('static');
 						playerStrums.members[0].centerOffsets();
-								
-								
+									
+									
 					}
 				}
+
+					//
+
+				
 
 				/*if (FlxG.save.data.downscroll)
 					daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (-0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2)));
@@ -2886,7 +2895,7 @@ class PlayState extends MusicBeatState
 
 
 
-		if (!inCutscene)
+		if (!inCutscene && !auto)
 			keyShit();
 
 
@@ -3749,6 +3758,8 @@ class PlayState extends MusicBeatState
 					else
 						spr.centerOffsets();
 				});
+
+				
 	}
 
 	function noteMiss(direction:Int = 1, daNote:Note):Void
@@ -3980,6 +3991,11 @@ class PlayState extends MusicBeatState
 					if (Math.abs(note.noteData) == spr.ID)
 					{
 						spr.animation.play('confirm', true);
+						if(auto && !curStage.startsWith('school')){
+							spr.centerOffsets();
+							spr.offset.x -= 13;
+							spr.offset.y -= 13;
+						}
 					}
 				});
 					

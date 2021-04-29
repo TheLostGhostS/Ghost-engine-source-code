@@ -6,6 +6,8 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 #if polymod
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
@@ -188,9 +190,16 @@ class Note extends FlxSprite
 		if (mustPress)
 		{	
 
-			if(strumTime-300 <= Conductor.songPosition && PlayState.playerdance && PlayState.auto){
-				PlayState.playerdance = false;
-				PlayState.bfstartdancin.active = false;
+			if(PlayState.auto){
+
+				if(PlayState.playerdance){
+					PlayState.playerdance = false;
+
+				}
+				if(PlayState.bfstartdancin.active){
+					PlayState.bfstartdancin.active = false;
+
+				}
 			}
 			
 
@@ -212,8 +221,6 @@ class Note extends FlxSprite
 			
 			if(PlayState.auto){
 				
-				canBeHit = true;
-				
 
 				if (strumTime <= Conductor.songPosition && !isSustainNote){
 					wasGoodHit = true;
@@ -229,9 +236,13 @@ class Note extends FlxSprite
 		else
 		{
 			canBeHit = false;
-			if(strumTime-300 <= Conductor.songPosition && PlayState.daddance){
-				PlayState.daddance = false;
-				PlayState.dadstartdancin.active = false;
+			if(strumTime-300 <= Conductor.songPosition){
+				if(PlayState.daddance){
+					PlayState.daddance = false;
+				}
+				if(PlayState.dadstartdancin.active){
+					PlayState.dadstartdancin.active = false;
+				}
 			}
 
 			if (strumTime <= Conductor.songPosition && !isSustainNote){
@@ -246,8 +257,7 @@ class Note extends FlxSprite
 
 		if (tooLate)
 		{
-			if (alpha > 0.3)
-				alpha = 0.3;
+			FlxTween.tween(this, {alpha: .3}, .3, {ease: FlxEase.sineIn });
 		}
 	}
 }

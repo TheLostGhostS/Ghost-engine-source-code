@@ -325,7 +325,7 @@ class FreeplayState extends MusicBeatState
 
 		#if windows
 		 // Updating Discord Rich Presence
-		 DiscordClient.changePresence("In the Freeplay Menu", "Currently selecting: " + songs[curSelected].songName + " ( " + (curDifficulty==0 ? "Easy" : curDifficulty==1 ? "Normal" : curDifficulty==2 ? "Hard" : "")+" )");
+		 DiscordClient.changePresence("In the Freeplay Menu", "Currently selecting: " + songs[curSelected].songName + " (" + (curDifficulty==0 ? "Easy" : curDifficulty==1 ? "Normal" : curDifficulty==2 ? "Hard" : "")+")");
 	 	#end
 
 	}
