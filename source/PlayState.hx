@@ -2564,7 +2564,7 @@ class PlayState extends MusicBeatState
 					if(daNote.mustPress){
 						
 						if(!bfstartdancin.active && !auto){
-							bfstartdancin.start(1.5, function(bfstartdancin:FlxTimer){
+							bfstartdancin.start(1.1, function(bfstartdancin:FlxTimer){
 							playerdance=true; }, 1);
 						}
 						
@@ -2806,6 +2806,7 @@ class PlayState extends MusicBeatState
 								
 								
 					}
+
 						
 					if (!boyfriend.animation.curAnim.name.startsWith("singUP") && auto)
 					{
@@ -2830,6 +2831,16 @@ class PlayState extends MusicBeatState
 									
 									
 					}
+
+					for(i in 0...playerStrums.length){
+						if(playerStrums.members[i].animation.curAnim.name == 'confirm' && playerdance){
+
+							playerStrums.members[i].animation.play('pressed');
+						}
+
+					}
+
+
 				}
 
 					//
@@ -3601,7 +3612,7 @@ class PlayState extends MusicBeatState
 				});
 			}
 			
-			if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && !up && !down && !right && !left)
+			if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && ((!up && !down && !right && !left) || playerdance) )
 			{
 				if (boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.animation.curAnim.name.endsWith('miss'))
 				{
@@ -3628,7 +3639,7 @@ class PlayState extends MusicBeatState
 							}
 							else
 							{
-								if (upP && spr.animation.curAnim.name != 'confirm' && !loadRep)
+								if (upP && (spr.animation.curAnim.name != 'confirm') && !loadRep)
 								{
 									spr.animation.play('pressed');
 									if(!playerdance){
@@ -3665,7 +3676,7 @@ class PlayState extends MusicBeatState
 								}
 							else
 							{
-								if (rightP && spr.animation.curAnim.name != 'confirm' && !loadRep){
+								if (rightP && (spr.animation.curAnim.name != 'confirm') && !loadRep){
 									spr.animation.play('pressed');
 									if(!playerdance){
 										if(FlxG.save.data.dif == 1){
@@ -3700,7 +3711,7 @@ class PlayState extends MusicBeatState
 								}
 							else
 							{
-								if (downP && spr.animation.curAnim.name != 'confirm' && !loadRep){
+								if (downP && (spr.animation.curAnim.name != 'confirm') && !loadRep){
 
 
 									spr.animation.play('pressed');
@@ -3739,7 +3750,7 @@ class PlayState extends MusicBeatState
 								}
 							else
 							{
-								if (leftP && spr.animation.curAnim.name != 'confirm' && !loadRep){
+								if (leftP && (spr.animation.curAnim.name != 'confirm') && !loadRep){
 
 									spr.animation.play('pressed');
 									if(!playerdance){
