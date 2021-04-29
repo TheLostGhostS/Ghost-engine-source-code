@@ -43,7 +43,8 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 - [The contributors](https://github.com/KadeDev/Kade-Engine/graphs/contributors)
 
 ### Ghost Engine
-- [Ghost 4420576] - Improvements on kade engine and now developer of this engine
+- Ghost 4420576 - Improvements on kade engine and now developer of this engine
+(No social media available)
 
 
 
