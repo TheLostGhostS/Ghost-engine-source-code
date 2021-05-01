@@ -226,121 +226,7 @@ class PlayState extends MusicBeatState
 	public static var percentage:Int;
 
 	public var focus = false;
-		// LUA SHIT
-
-		private function convert(v : Any, type : String) : Dynamic { // I didn't write this lol
-			if( Std.is(v, String) && type != null ) {
-			var v : String = v;
-			if( type.substr(0, 4) == 'array' ) {
-				if( type.substr(4) == 'float' ) {
-				var array : Array<String> = v.split(',');
-				var array2 : Array<Float> = new Array();
-	
-				for( vars in array ) {
-					array2.push(Std.parseFloat(vars));
-				}
-	
-				return array2;
-				} else if( type.substr(4) == 'int' ) {
-				var array : Array<String> = v.split(',');
-				var array2 : Array<Int> = new Array();
-	
-				for( vars in array ) {
-					array2.push(Std.parseInt(vars));
-				}
-	
-				return array2;
-				} else {
-				var array : Array<String> = v.split(',');
-				return array;
-				}
-			} else if( type == 'float' ) {
-				return Std.parseFloat(v);
-			} else if( type == 'int' ) {
-				return Std.parseInt(v);
-			} else if( type == 'bool' ) {
-				if( v == 'true' ) {
-				return true;
-				} else {
-				return false;
-				}
-			} else {
-				return v;
-			}
-			} else {
-			return v;
-			}
-		}
-	
-		function getActorByName(id:String):Dynamic
-		{
-			// pre defined names
-			switch(id)
-			{
-				case 'boyfriend':
-					return boyfriend;
-				case 'girlfriend':
-					return gf;
-				case 'dad':
-					return dad;
-			}
-			// lua objects or what ever
-			if (luaSprites.get(id) == null)
-				return strumLineNotes.members[Std.parseInt(id)];
-			return luaSprites.get(id);
-		}
-	
-		public static var luaSprites:Map<String,FlxSprite> = [];
-	
-	
-	
-		function makeLuaSprite(spritePath:String,toBeCalled:String, drawBehind:Bool)
-		{
-			#if sys
-			var data:BitmapData = BitmapData.fromFile(Sys.getCwd() + "assets/data/" + PlayState.SONG.song.toLowerCase() + '/' + spritePath + ".png");
-	
-			var sprite:FlxSprite = new FlxSprite(0,0);
-			var imgWidth:Float = FlxG.width / data.width;
-			var imgHeight:Float = FlxG.height / data.height;
-			var scale:Float = imgWidth <= imgHeight ? imgWidth : imgHeight;
-	
-			// Cap the scale at x1
-			if (scale > 1)
-			{
-				scale = 1;
-			}
-	
-			sprite.makeGraphic(Std.int(data.width * scale),Std.int(data.width * scale),FlxColor.TRANSPARENT);
-	
-			var data2:BitmapData = sprite.pixels.clone();
-			var matrix:Matrix = new Matrix();
-			matrix.identity();
-			matrix.scale(scale, scale);
-			data2.fillRect(data2.rect, FlxColor.TRANSPARENT);
-			data2.draw(data, matrix, null, null, null, true);
-			sprite.pixels = data2;
-			
-			luaSprites.set(toBeCalled,sprite);
-			// and I quote:
-			// shitty layering but it works!
-			if (drawBehind)
-			{
-				remove(gf);
-				remove(boyfriend);
-				remove(dad);
-			}
-			add(sprite);
-			if (drawBehind)
-			{
-				add(gf);
-				add(boyfriend);
-				add(dad);
-			}
-			#end
-			return toBeCalled;
-		}
-	
-		// LUA SHIT
+		
 
 	var Dif:Array<String> = [
 		"Baby",
@@ -820,6 +706,7 @@ class PlayState extends MusicBeatState
 		gf.scrollFactor.set(0.95, 0.95);
 
 		dad = new Character(100, 100, SONG.player2);
+		
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
@@ -1844,10 +1731,10 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.pause();
 				vocals.pause();
 			}
-			//DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2) + "%" : ""), iconRPC);
+			//DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC);
 			#if windows
 
-			DiscordClient.changePresence("PAUSED on " + SONG.song + " (" + storyDifficultyText + " " + (!auto ? Dif[FlxG.save.data.dif] : "Auto" ) +") " + generateRanking(), (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2)+ "%": "") + (FlxG.save.data.dif==1 ? " | Missclick: " + dismisses : ""), iconRPC);
+			DiscordClient.changePresence("PAUSED on " + SONG.song + " (" + storyDifficultyText + " " + (!auto ? Dif[FlxG.save.data.dif] : "Auto" ) +") " + generateRanking(), (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0)+ "%": "") + (FlxG.save.data.dif==1 ? " | Missclick: " + dismisses : ""), iconRPC);
 
 			#end
 			if (!startTimer.finished)
@@ -1874,12 +1761,12 @@ class PlayState extends MusicBeatState
 				if (startTimer.finished)
 				{	
 					trace("hello");
-					DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2) + "%" : ""), iconRPC, true,  songLength - Conductor.songPosition);
+					DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC, true,  songLength - Conductor.songPosition);
 				}
 				else
 				{
 				
-					DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2) + "%" : ""), iconRPC);
+					DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC);
 
 				}
 			#end
@@ -1899,7 +1786,7 @@ class PlayState extends MusicBeatState
 		vocals.play();
 
 		#if windows
-		DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2) + "%" : ""), iconRPC);
+		DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC);
 		#end
 	}
 
@@ -2008,6 +1895,16 @@ class PlayState extends MusicBeatState
 		#if !debug
 		perfectMode = false;
 		#end
+
+		#if windows
+		// Updating Discord Rich Presence (with Time Left)
+
+		DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC, true,  songLength - Conductor.songPosition);
+
+		
+		
+		#end
+
 		
 		if(!paused){
 			//angleinc(5, 4);
@@ -2122,7 +2019,7 @@ class PlayState extends MusicBeatState
 					case 1:
 					scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "") + "Score:" + (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore) + " | Combo Breaks:" + misses + " | Fails:" + dismisses +" | Accuracy:" + truncateFloat(accuracy, 2) + "% | " + generateRanking();
 					case 3:
-						scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "") + "Score:" + (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore) + " | Fails:" + dismisses +" | Accuracy:" + truncateFloat(accuracy, 2) + "% | " + generateRanking()  + " | Percentage:" + truncateFloat((songTime/songLength)*100, 0) + "%" ;
+						scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "") + "Score:" + (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore) + " | Accuracy:" + truncateFloat(accuracy, 2) + "% | " + generateRanking()  + " | Percentage:" + truncateFloat((songTime/songLength)*100, 0) + "%" ;
 					
 					default:				
 					scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "") + "Score:" + (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore) + " | Combo Breaks:" + misses + " | Accuracy:" + truncateFloat(accuracy, 2) + "% | " + generateRanking();
@@ -2490,7 +2387,7 @@ class PlayState extends MusicBeatState
 			#if windows
 			// Game Over doesn't get his own variable because it's only used here
 
-			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + " " + (!auto ? Dif[FlxG.save.data.dif] : "Auto" ) +") " + generateRanking(), (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + "Score: " + songScore + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2)+ "%": "") + (FlxG.save.data.dif==1 ? " | Missclick: " + dismisses : ""), iconRPC);
+			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + " " + (!auto ? Dif[FlxG.save.data.dif] : "Auto" ) +") " + generateRanking(), (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + "Score: " + songScore + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0)+ "%": "") + (FlxG.save.data.dif==1 ? " | Missclick: " + dismisses : ""), iconRPC);
 
 			#end
 
@@ -2694,6 +2591,15 @@ class PlayState extends MusicBeatState
 
 						}
 
+						if(daNote.isSustainNote){
+							daNote.x += Math.cos(angleC[daNote.noteData+4])*noteWidth/2;
+							daNote.x -= Math.cos(angleC[daNote.noteData+4])*daNote.width/2;
+							daNote.y += Math.sin(angleC[daNote.noteData+4])*noteWidth/2;
+							daNote.y -= Math.sin(angleC[daNote.noteData+4])*daNote.width/2;
+							
+						}
+
+
 					}else{
 						daNote.y = enemyStrums.members[daNote.noteData].y - (Math.cos(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 						daNote.x = enemyStrums.members[daNote.noteData].x - (Math.sin(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
@@ -2708,14 +2614,18 @@ class PlayState extends MusicBeatState
 
 						}
 
+						if(daNote.isSustainNote){
+							daNote.x += Math.cos(angleC[daNote.noteData])*noteWidth/2;
+							daNote.x -= Math.cos(angleC[daNote.noteData])*daNote.width/2;
+							daNote.y += Math.sin(angleC[daNote.noteData])*noteWidth/2;
+							daNote.y -= Math.sin(angleC[daNote.noteData])*daNote.width/2;
+							
+						}
+
 					}
 
 
-					if(daNote.isSustainNote){
-						daNote.x += noteWidth/2;
-						daNote.x -= daNote.width/2;
-						
-					}
+					
 
 
 					
@@ -2761,37 +2671,38 @@ class PlayState extends MusicBeatState
 
 				if(enemyStrums.members[0] != null && enemyStrums.members[1] != null && enemyStrums.members[2] != null && enemyStrums.members[3] != null)
 				{
-						
-					if (!dad.animation.curAnim.name.startsWith("singDOWN"))
-					{
-						enemyStrums.members[1].animation.play('static');
-						enemyStrums.members[1].centerOffsets();
-							
-							
-					}
-					
-					if (!dad.animation.curAnim.name.startsWith("singUP"))
-					{
-						enemyStrums.members[2].animation.play('static');
-						enemyStrums.members[2].centerOffsets();
-							
-										
-					}
-					
-					if (!dad.animation.curAnim.name.startsWith("singRIGHT"))
-					{
-						enemyStrums.members[3].animation.play('static');
-						enemyStrums.members[3].centerOffsets();
-							
-										
-					}
-
-					if (!dad.animation.curAnim.name.startsWith("singLEFT"))
-					{
-						enemyStrums.members[0].animation.play('static');
-						enemyStrums.members[0].centerOffsets();
-							
+					if(dad.animation.curAnim!=null){
+						if (!dad.animation.curAnim.name.startsWith("singDOWN"))
+						{
+							enemyStrums.members[1].animation.play('static');
+							enemyStrums.members[1].centerOffsets();
 								
+								
+						}
+						
+						if (!dad.animation.curAnim.name.startsWith("singUP"))
+						{
+							enemyStrums.members[2].animation.play('static');
+							enemyStrums.members[2].centerOffsets();
+								
+											
+						}
+						
+						if (!dad.animation.curAnim.name.startsWith("singRIGHT"))
+						{
+							enemyStrums.members[3].animation.play('static');
+							enemyStrums.members[3].centerOffsets();
+								
+											
+						}
+
+						if (!dad.animation.curAnim.name.startsWith("singLEFT"))
+						{
+							enemyStrums.members[0].animation.play('static');
+							enemyStrums.members[0].centerOffsets();
+								
+									
+						}
 					}
 
 				}
@@ -2833,7 +2744,7 @@ class PlayState extends MusicBeatState
 					}
 
 					for(i in 0...playerStrums.length){
-						if(playerStrums.members[i].animation.curAnim.name == 'confirm' && playerdance){
+						if(playerStrums.members[i].animation.curAnim.name == 'confirm' && playerdance && !auto){
 
 							playerStrums.members[i].animation.play('pressed');
 						}
@@ -3615,7 +3526,11 @@ class PlayState extends MusicBeatState
 			if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && ((!up && !down && !right && !left) || playerdance) )
 			{
 				if (boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.animation.curAnim.name.endsWith('miss'))
-				{
+				{	
+
+					if(bfstartdancin.active){
+						playerdance = true;
+					}
 					boyfriend.playAnim('idle');
 				}
 			}
@@ -4148,7 +4063,7 @@ class PlayState extends MusicBeatState
 
 		// Updating Discord Rich Presence (with Time Left)
 		
-		DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 2) + "%" : ""), iconRPC, true,  songLength - Conductor.songPosition);
+		DiscordClient.changePresence((!auto ? Dif[FlxG.save.data.dif] : "Auto" ) + " " + detailsText + " " + SONG.song + " (" + storyDifficultyText + ") " + generateRanking(), "\n" + (FlxG.save.data.dif!=0 ? "Acc: " + truncateFloat(accuracy, 2) + "% | " : "") + (!FlxG.save.data.practice ?  "Score: " + songScore : "Practice Mode") + (FlxG.save.data.dif!=3 ? " | Misses: " + misses : "") + (FlxG.save.data.dif==1 ? " | Miss Clicks: " + dismisses : "") + (FlxG.save.data.dif==3 ? " | Percentage: " + truncateFloat((songTime/songLength)*100, 0) + "%" : ""), iconRPC, true,  songLength - Conductor.songPosition);
 	
 		
 		#end

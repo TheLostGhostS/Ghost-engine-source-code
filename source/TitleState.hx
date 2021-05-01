@@ -379,6 +379,7 @@ class TitleState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit(); //the definition of this function makes me feel rick rolled for some reason, which now that i think of is the fricking function we are overriding rn
+						//update from ghost of the future tf was i saying in the comment above i mean it doesnt make any sense wtf
 
 		logoBl.animation.play('bump');
 		danceLeft = !danceLeft;

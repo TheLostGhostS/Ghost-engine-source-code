@@ -69,11 +69,13 @@ class MenuCharacter extends FlxSprite
 			visible = true;
 		}
 
-		animation.play(character);
+			animation.play(character);
+		
 
 		var setting:CharacterSetting = settings[character];
 		offset.set(setting.x, setting.y);
 		setGraphicSize(Std.int(width * setting.scale));
 		flipX = setting.flipped != flipped;
+		
 	}
 }

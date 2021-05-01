@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxBasic;
 import Controls.Control;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -12,12 +13,32 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+/*
+if (accepted)
+		{
+			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+
+			trace(poop);
+
+			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+			PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = curDifficulty;
+			PlayState.storyWeek = songs[curSelected].week;
+			trace('CUR WEEK' + PlayState.storyWeek);
+			LoadingState.loadAndSwitchState(new PlayState());
+		}
+*/
 
 class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
+	var difMenuShit:FlxTypedGroup<Alphabet>;
+	var gendifMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Toggle practice mode' ,'Exit to menu'];
+	var mainmenuItems:Array<String> = ['Resume', 'Restart Song', 'Difficulty', 'General Difficulty','Practice mode' ,'Exit to menu'];
+	var dificultymenuItems:Array<String> = ['Easy', 'Normal', 'Hard','Back'];
+	var generaldificultymenuItems:Array<String> = ['Baby', 'Classic', 'Permissive', 'Geometry Dash','Back'];
+	var menuItems:Array<String> = [];
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
@@ -92,6 +113,33 @@ class PauseSubState extends MusicBeatSubstate
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
 
+		difMenuShit = new FlxTypedGroup<Alphabet>();
+
+		gendifMenuShit = new FlxTypedGroup<Alphabet>();
+
+		menuItems = dificultymenuItems;
+
+		for (i in 0...menuItems.length)
+		{
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
+			songText.isMenuItem = true;
+			songText.targetY = i;
+			difMenuShit.add(songText);
+		}
+
+		menuItems = generaldificultymenuItems;
+
+		for (i in 0...menuItems.length)
+		{
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
+			songText.isMenuItem = true;
+			songText.targetY = i;
+			gendifMenuShit.add(songText);
+		}
+
+
+		menuItems = mainmenuItems;
+
 		for (i in 0...menuItems.length)
 		{
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
@@ -99,6 +147,10 @@ class PauseSubState extends MusicBeatSubstate
 			songText.targetY = i;
 			grpMenuShit.add(songText);
 		}
+
+		
+
+		
 
 		changeSelection();
 
@@ -110,7 +162,7 @@ class PauseSubState extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		if (pauseMusic.volume < 0.5)
-			pauseMusic.volume += 0.01 * elapsed;
+			pauseMusic.volume += 0.02 * elapsed;
 
 		super.update(elapsed);
 
@@ -137,16 +189,32 @@ class PauseSubState extends MusicBeatSubstate
 					close();
 				case "Restart Song":
 					FlxG.resetState();
-				case "Exit to menu":
-					PlayState.loadRep = false;
-					if (PlayState.offsetTesting)
-					{
-						PlayState.offsetTesting = false;
-						FlxG.switchState(new OptionsMenu());
-					}
-					else
-						FlxG.switchState(new MainMenuState());
-				case "Toggle practice mode":
+				case "Difficulty":
+
+					
+					remove(grpMenuShit);
+					
+					curSelected = 0;
+
+					menuItems = dificultymenuItems;	
+
+					add(difMenuShit);
+
+					changeSelection();
+				
+				case "General Difficulty":
+
+					remove(grpMenuShit);
+					
+					curSelected = 0;
+
+					menuItems = generaldificultymenuItems;	
+
+					add(gendifMenuShit);
+
+					changeSelection();
+				
+				case "Practice mode":
 
 					if(FlxG.save.data.practice ){
 						FlxG.save.data.practice = false;
@@ -158,6 +226,57 @@ class PauseSubState extends MusicBeatSubstate
 
 					}
 					FlxG.save.flush();
+				case "Exit to menu":
+					PlayState.loadRep = false;
+					if (PlayState.offsetTesting)
+					{
+						PlayState.offsetTesting = false;
+						FlxG.switchState(new OptionsMenu());
+					}
+					else
+						FlxG.switchState(new MainMenuState());
+
+				
+				//difficulty options thingy idk
+
+				case "Easy":
+					
+					changeDif(0);
+
+				case "Normal":
+					changeDif(1);
+
+				case "Hard":
+					changeDif(2);
+
+
+				case "Back":
+
+					remove(difMenuShit);
+					remove(gendifMenuShit);
+
+					curSelected = 0;
+
+					menuItems = mainmenuItems;	
+
+					add(grpMenuShit);
+
+					changeSelection();
+
+				//General difficulty options over hea idk
+
+				case "Baby":
+					changeGenDif(0);
+
+				case "Classic":
+					changeGenDif(1);
+
+				case "Permissive":
+					changeGenDif(2);
+
+				case "Geometry Dash":
+					changeGenDif(3);
+				
 
 			}
 		}
@@ -187,19 +306,85 @@ class PauseSubState extends MusicBeatSubstate
 
 		var bullShit:Int = 0;
 
-		for (item in grpMenuShit.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
+		if(menuItems == mainmenuItems){
 
-			item.alpha = 0.6;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
+			for (item in grpMenuShit.members)
 			{
-				item.alpha = 1;
-				// item.setGraphicSize(Std.int(item.width));
+				item.targetY = bullShit - curSelected;
+				bullShit++;
+
+				item.alpha = 0.6;
+				// item.setGraphicSize(Std.int(item.width * 0.8));
+
+				if (item.targetY == 0)
+				{
+					item.alpha = 1;
+					// item.setGraphicSize(Std.int(item.width));
+				}
 			}
+
+		}else if(menuItems == dificultymenuItems){
+
+			for (item in difMenuShit.members)
+			{
+				item.targetY = bullShit - curSelected;
+				bullShit++;
+	
+				item.alpha = 0.6;
+				// item.setGraphicSize(Std.int(item.width * 0.8));
+	
+				if (item.targetY == 0)
+				{
+					item.alpha = 1;
+					// item.setGraphicSize(Std.int(item.width));
+				}
+			}	
+
+
+		}else if(menuItems == generaldificultymenuItems){
+			
+			for (item in gendifMenuShit.members)
+				{
+					item.targetY = bullShit - curSelected;
+					bullShit++;
+		
+					item.alpha = 0.6;
+					// item.setGraphicSize(Std.int(item.width * 0.8));
+		
+					if (item.targetY == 0)
+					{
+						item.alpha = 1;
+						// item.setGraphicSize(Std.int(item.width));
+					}
+				}	
+
+
 		}
+
+
+
 	}
+
+	function changeDif(dif:Int){
+		var poop:String = Highscore.formatSong(PlayState.SONG.song.toLowerCase(), dif);
+
+			trace(poop);
+
+			PlayState.SONG = Song.loadFromJson(poop, PlayState.SONG.song.toLowerCase());
+			PlayState.storyDifficulty = dif;
+			trace('CUR WEEK' + PlayState.storyWeek);
+			LoadingState.loadAndSwitchState(new PlayState());
+
+
+	}
+
+	function changeGenDif(dif:Int){
+		FlxG.save.data.dif = dif;
+
+		FlxG.save.flush();
+
+		FlxG.resetState();
+
+	}
+
 }

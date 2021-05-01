@@ -106,12 +106,16 @@ class Paths
 	}
 
 	inline static public function getSparrowAtlas(key:String, ?library:String)
-	{
+	{	
+		if(library == 'week3')
+		trace(image(key, library) + "  " + file('images/$key.xml', library));
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
+		if(library == 'week3')
+			trace(image(key, library) + "  " + file('images/$key.txt', library));
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
 }

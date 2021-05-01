@@ -386,7 +386,8 @@ class FreeplayState extends MusicBeatState
 		#if PRELOAD_ALL
 		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 		trace(songs[curSelected].songName);
-		
+
+		if(songsbpm[curSelected]!=null){
 			
 			if(PulseInterv.time!=60/songsbpm[curSelected].bpm){	
 
@@ -413,7 +414,7 @@ class FreeplayState extends MusicBeatState
 
 			}
 
-		
+		}
 
 
 		//SONG = Song.loadFromJson(songs[curSelected].songName, songs[curSelected].songName); //tried this and entirely got rid of sound also heavy loading -Ghost

@@ -257,8 +257,10 @@ class ChartingState extends MusicBeatState
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player1 = characters[Std.parseInt(character)]; 
-			updateHeads();
 			
+			//PlayState.dad
+			updateHeads();
+			//comment for future reference
 		});
 		player1DropDown.selectedLabel = _song.player1;
 		
@@ -678,7 +680,7 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.justPressed.ENTER)
 		{
 			lastSection = curSection;
-
+			
 			PlayState.SONG = _song;
 			FlxG.sound.music.stop();
 			vocals.stop();
