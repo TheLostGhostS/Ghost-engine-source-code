@@ -217,9 +217,17 @@ class PlayState extends MusicBeatState
 	private var allowedToHeadbang:Bool = false;
 	private var Offset:Float = 13;
 
-	public var angle:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0];
-	public var angleC:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0];
-	public var angleD:Array<Float> = [0, 0];
+	public var angle:Array<Float>   =   [0, 0, 0, 0, 0, 0, 0, 0];  //rotation of the sprite of the gray arrows
+	public var angleC:Array<Float>  =   [0, 0, 0, 0, 0, 0, 0, 0];  //rotation of the incoming arrows
+
+	public var angleD:Array<Float>  =   [180, 180,   0,   0, 180, 180,   0,   0];  //angle of rotation of the pivot of gray arrows
+	public var orbit:Array<Float>   =   [168, 56, 56, 168, 168, 56,  56, 168];  //orbit of the arrow, distance from the pivot
+
+	public var alpha:Array<Float>   =   [1, 1, 1, 1, 1, 1, 1, 1];  //the alpha of the arrows
+
+
+	//first 4 for enemy arrows, last 4 for player's
+
 
 	private var autoTxt:Alphabet;
 	
@@ -715,11 +723,11 @@ class PlayState extends MusicBeatState
 			case 'gf':
 				dad.setPosition(gf.x, gf.y);
 				gf.visible = false;
-				if (isStoryMode)
-				{
-					camPos.x += 600;
-					tweenCamIn();
-				}
+			if (isStoryMode)
+			{
+				camPos.x += 600;
+				tweenCamIn();
+			}
 
 			case "spooky":
 				dad.y += 200;
@@ -1526,6 +1534,18 @@ class PlayState extends MusicBeatState
 		for (section in noteData)
 		{
 			var coolSection:Int = Std.int(section.lengthInSteps / 4);
+			if(section.effects != null){
+				for(songEffects in section.effects){
+
+					var daStrumTime:Float = songEffects[0] + FlxG.save.data.offset;
+					if (daStrumTime < 0)
+					daStrumTime = 0;
+
+
+
+				}
+			}
+
 
 			for (songNotes in section.sectionNotes)
 			{
@@ -2067,7 +2087,7 @@ class PlayState extends MusicBeatState
 			persistentUpdate = false;
 			persistentDraw = true;
 			paused = true;
-
+			
 			// 1 / 1000 chance for Gitaroo Man easter egg
 			if (FlxG.random.bool(0.1))
 			{
@@ -2408,11 +2428,22 @@ class PlayState extends MusicBeatState
 
 		for(i in 0...8){
 			if(strumLineNotes.members[i] != null){
+
 				if(strumLineNotes.members[i].angle != angle[i] && strumLineNotes.members[i].animation.curAnim.name != "confirm"){
-
 					strumLineNotes.members[i].angle = angle[i];
-
 				}
+
+				if(strumLineNotes.members[i].alpha != alpha[i]){
+					if(alpha[i] < 0){
+						strumLineNotes.members[i].alpha = 0;
+					}else if(alpha[i] > 1){
+						strumLineNotes.members[i].alpha = 1;
+					}else{
+						strumLineNotes.members[i].alpha = alpha[i];
+					}
+				}
+
+
 				if(strumLineNotes.members[i].animation.curAnim.name == "confirm" && curStage != "school" && curStage != "schoolEvil" && strumLineNotes.members[i].angle != 0){
 
 					strumLineNotes.members[i].angle = 0;
@@ -2420,12 +2451,12 @@ class PlayState extends MusicBeatState
 				}
 
 				if(i < 4){
-					strumLineNotes.members[i].x = currentPositionX[0] + Math.cos(angleD[0])*((Note.swagWidth * Math.abs(i)) - Note.swagWidth * 1.5);
-					strumLineNotes.members[i].y = currentPositionY[0] + Math.sin(angleD[0])*((Note.swagWidth * Math.abs(i)) - Note.swagWidth * 1.5);
+					strumLineNotes.members[i].x = currentPositionX[0] + Math.cos(angleD[i]*(Math.PI/180))*(orbit[i]);
+					strumLineNotes.members[i].y = currentPositionY[0] + Math.sin(angleD[i]*(Math.PI/180))*(orbit[i]);
 					
 				}else{
-					strumLineNotes.members[i].x = currentPositionX[1] + Math.cos(angleD[1])*((Note.swagWidth * Math.abs(i-4)) - Note.swagWidth * 1.5);
-					strumLineNotes.members[i].y = currentPositionY[1] + Math.sin(angleD[1])*((Note.swagWidth * Math.abs(i-4)) - Note.swagWidth * 1.5);
+					strumLineNotes.members[i].x = currentPositionX[1] + Math.cos(angleD[i]*(Math.PI/180))*(orbit[i]);
+					strumLineNotes.members[i].y = currentPositionY[1] + Math.sin(angleD[i]*(Math.PI/180))*(orbit[i]);
 
 				}
 			}
@@ -2579,7 +2610,11 @@ class PlayState extends MusicBeatState
 						daNote.y = playerStrums.members[daNote.noteData].y - (Math.cos(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 						daNote.x = playerStrums.members[daNote.noteData].x - (Math.sin(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 						
-						
+						if(daNote.alpha != playerStrums.members[daNote.noteData].alpha){
+
+							daNote.alpha = playerStrums.members[daNote.noteData].alpha;
+
+						}
 
 						if(daNote.animation != null){
 							
@@ -2603,6 +2638,12 @@ class PlayState extends MusicBeatState
 					}else{
 						daNote.y = enemyStrums.members[daNote.noteData].y - (Math.cos(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 						daNote.x = enemyStrums.members[daNote.noteData].x - (Math.sin(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
+
+						if(daNote.alpha != enemyStrums.members[daNote.noteData].alpha){
+
+							daNote.alpha = enemyStrums.members[daNote.noteData].alpha;
+							
+						}
 
 						if(daNote.animation != null){
 							
@@ -2837,36 +2878,17 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	var incremental:Array<FlxTimer> = [new FlxTimer(), new FlxTimer()];
+	function UpdateFeatures(ang:Int, mod:Int, val:Int):Void{
 
-	function vibe(time:Float, radius:Float, player:Int):Void{
+		if(ang < 5){
+			switch(ang){
 
-		var calc:Float = (songTime/(time*160))%6.28;
 
-		currentPositionX[player]  = initialPositionX[player] + (Math.cos(calc)*radius);
+			}
 
-		
+		}
 
-	}
 
-	function angleinc(time:Float, arrow:Int){
-
-		angle[arrow] = (songTime/time)%360;
-		// trace(angle, enemyStrums.members[0].offset.x);
-
-	}
-
-	function angledir(time:Float, player:Int){
-
-		angleD[player] = (songTime/time)%360;
-		// trace(angleD);
-
-	}
-
-	function anglecirc(time:Float, arrow:Int){
-
-		angleC[arrow] = (songTime/time)%360;
-		//trace(angleC);
 
 	}
 
@@ -2911,7 +2933,9 @@ class PlayState extends MusicBeatState
 					#if windows
 						DiscordClient.changePresence("In the Menus", null);
 					#end
+				
 					FlxG.switchState(new StoryMenuState());
+
 
 					// if ()
 					StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
@@ -2965,7 +2989,12 @@ class PlayState extends MusicBeatState
 				#if windows
 					DiscordClient.changePresence("In the Freeplay Menu", null);
 				#end
+				
+				
 				FlxG.switchState(new FreeplayState());
+
+				
+				
 			}
 		}
 	}

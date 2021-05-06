@@ -1127,7 +1127,8 @@ class ChartingState extends MusicBeatState
 			mustHitSection: true,
 			sectionNotes: [],
 			typeOfSection: 0,
-			altAnim: false
+			altAnim: false,
+			effects: []
 		};
 
 		_song.notes.push(sec);

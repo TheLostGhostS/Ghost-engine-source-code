@@ -7,6 +7,12 @@ import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxTimer;
+import flixel.ui.FlxBar;
+import flixel.math.FlxMath;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+
 
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
@@ -24,8 +30,15 @@ class LoadingState extends MusicBeatState
 	var callbacks:MultiCallback;
 	
 	var logo:FlxSprite;
-	var gfDance:FlxSprite;
-	var danceLeft = false;
+	var screen:FlxSprite;
+	var bar1:FlxBar;
+	var bar2:FlxBar;
+
+	var progress:Int;
+	var color:FlxColor;
+
+	var way:FlxBarFillDirection = VERTICAL_INSIDE_OUT;
+	
 	
 	function new(target:FlxState, stopMusic:Bool)
 	{
@@ -35,24 +48,53 @@ class LoadingState extends MusicBeatState
 	}
 	
 	override function create()
-	{
-		logo = new FlxSprite(-150, -100);
+	{	
+		
+
+		logo = new FlxSprite(-100, 10);
 		logo.frames = Paths.getSparrowAtlas('logoBumpin');
 		logo.antialiasing = true;
 		logo.animation.addByPrefix('bump', 'logo bumpin', 24);
 		logo.animation.play('bump');
 		logo.updateHitbox();
+		logo.setGraphicSize(Std.int(logo.width * 0.8), Std.int(logo.height * 0.8));
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
 
-		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
-		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = true;
-		add(gfDance);
-		add(logo);
+		progress = 0;
+
+		if(FlxG.random.bool(25)){
+			color = 0xFF1679B6;
+		}else if(FlxG.random.bool(33)){
+			color = 0xFF23B616;
+		}else if(FlxG.random.bool(50)){
+			color = 0xFF8B16B6;
+		}else{
+			color = 0xFFB61616;
+		}
+
 		
+
+		bar1 = new FlxBar(0, 0, way, 20, FlxG.height, this, 'progress', 0, 100);
+		bar1.scrollFactor.set();
+		bar1.createFilledBar(0xFF2E2E2E, color);
+
+		bar2 = new FlxBar(FlxG.width - 20, 0, way, 20, FlxG.height, this, 'progress', 0, 100);
+		bar2.scrollFactor.set();
+		bar2.createFilledBar(0xFF2E2E2E, color);
+
+
+		screen = new FlxSprite(0, 0).loadGraphic(Paths.image('loadingScreen'));
+		screen.updateHitbox();
+		screen.screenCenter();
+		
+
+		
+		add(screen);
+		add(logo);
+		add(bar1);
+		add(bar2);
+
 		initSongsManifest().onComplete
 		(
 			function (lib)
@@ -63,16 +105,24 @@ class LoadingState extends MusicBeatState
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
 				checkLibrary("shared");
-				if (PlayState.storyWeek > 0)
+				if (PlayState.storyWeek > 0){
 					checkLibrary("week" + PlayState.storyWeek);
+					trace("Library checked");
+				}
 				else
 					checkLibrary("tutorial");
 				
 				var fadeTime = 0.5;
 				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+				new FlxTimer().start(fadeTime + MIN_TIME, function(_){ introComplete(); });
+
 			}
 		);
+	}
+
+	function finish(yep:Float){
+
+		progress = Std.int(yep);
 	}
 	
 	function checkLoadSong(path:String)
@@ -92,7 +142,8 @@ class LoadingState extends MusicBeatState
 	
 	function checkLibrary(library:String)
 	{
-		trace(Assets.hasLibrary(library));
+		//trace(Assets.hasLibrary(library));
+		//trace(Assets.getLibrary(library));
 		if (Assets.getLibrary(library) == null)
 		{
 			@:privateAccess
@@ -109,27 +160,35 @@ class LoadingState extends MusicBeatState
 		super.beatHit();
 		
 		logo.animation.play('bump');
-		danceLeft = !danceLeft;
 		
-		if (danceLeft)
-			gfDance.animation.play('danceRight');
-		else
-			gfDance.animation.play('danceLeft');
+		
 	}
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		#if debug
+
+		
+		if(callbacks != null){
+			progress = Std.int( FlxMath.lerp(progress, (callbacks.getFired().length + 1 / (callbacks.length) ) * 100, .15) ) ;
+			//FlxTween.num(progress, 100, .4, {ease: FlxEase.linear, type:ONESHOT}, finish.bind() );
+			trace(callbacks.getUnfired().length);
+
+			if(callbacks.getUnfired().length == 0){
+				FlxTween.num(progress, 100, .4, {ease: FlxEase.linear, type:ONESHOT}, finish.bind() );
+			}
+		}
+		
 		if (FlxG.keys.justPressed.SPACE)
 			trace('fired: ' + callbacks.getFired() + " unfired:" + callbacks.getUnfired());
-		#end
+		
 	}
 	
 	function onLoad()
 	{
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
+		
 		
 		FlxG.switchState(target);
 	}
@@ -171,12 +230,37 @@ class LoadingState extends MusicBeatState
 	{
 		return Assets.cache.hasSound(path);
 	}
-	
+	#end
+
 	static function isLibraryLoaded(library:String):Bool
 	{
 		return Assets.getLibrary(library) != null;
 	}
-	#end
+	
+
+	public static function unloadLibrary(library:String){ //Update: this function didnt work but still im not deleting it -Ghost
+
+		if (isLibraryLoaded(library)){
+
+			#if windows
+
+				if(FlxG.save.data.unload){
+					Assets.unloadLibrary(library);
+				}
+
+			#end
+
+			#if linux
+
+				if(FlxG.save.data.unload){
+					Assets.unloadLibrary(library);
+				}
+
+			#end
+
+		}
+
+	}	
 	
 	override function destroy()
 	{
@@ -290,6 +374,7 @@ class MultiCallback
 					if (logId != null)
 						log('all callbacks fired');
 					callback();
+					
 				}
 			}
 			else

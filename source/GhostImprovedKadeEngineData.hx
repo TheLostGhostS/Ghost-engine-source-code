@@ -9,10 +9,10 @@ class GhostImprovedKadeEngineData
 			FlxG.save.data.newInput = true;
 
 		if(FlxG.save.data.dif == null)
-			FlxG.save.data.dif = 2;
+			FlxG.save.data.dif = 1;
 
 		if(FlxG.save.data.autopause == null)
-			FlxG.save.data.autopause = true;
+			FlxG.save.data.autopause = false;
 
 		if (FlxG.save.data.practice== null)
 			FlxG.save.data.practice = false;
@@ -65,6 +65,8 @@ class GhostImprovedKadeEngineData
 
 		if (FlxG.save.data.watermark == null)
 			FlxG.save.data.watermark = true;
+
+
 
 		Conductor.recalculateTimings();
 
