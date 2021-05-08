@@ -19,7 +19,8 @@ class Boyfriend extends Character
 	override function update(elapsed:Float)
 	{
 		if (!debugMode)
-		{
+		{	
+			
 			if (animation.curAnim.name.startsWith('sing'))
 			{
 				holdTimer += elapsed;
@@ -36,6 +37,7 @@ class Boyfriend extends Character
 			{
 				playAnim('deathLoop');
 			}
+			
 		}
 
 		super.update(elapsed);

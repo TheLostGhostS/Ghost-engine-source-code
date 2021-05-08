@@ -718,10 +718,12 @@ class PlayState extends MusicBeatState
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
+		boyfriend = new Boyfriend(770, 100, SONG.player1); //450
+
 		switch (SONG.player2)
 		{
 			case 'gf':
-				dad.setPosition(gf.x, gf.y);
+				boyfriend.setPosition(gf.x, gf.y);
 				gf.visible = false;
 			if (isStoryMode)
 			{
@@ -756,13 +758,15 @@ class PlayState extends MusicBeatState
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
 		}
 
+		
+
 
 		
-		boyfriend = new Boyfriend(770, 450, SONG.player1);
+		
 
 		// REPOSITIONING PER STAGE
 		switch (curStage)
-		{
+		{	
 			case 'limo':
 				boyfriend.y -= 220;
 				boyfriend.x += 260;
@@ -794,6 +798,47 @@ class PlayState extends MusicBeatState
 				boyfriend.y += 220;
 				gf.x += 180;
 				gf.y += 300;
+			
+		}
+
+		switch (SONG.player1)
+		{
+			case "spooky":
+				boyfriend.y += 200;
+			case "monster":
+				boyfriend.y += 100;
+			case 'monster-christmas':
+				boyfriend.y += 130;
+			case 'dad':
+				camPos.x += 400;
+			case 'pico':
+				camPos.x += 600;
+				boyfriend.y += 300;
+			case 'parents-christmas':
+				boyfriend.x -= 500;
+			case 'senpai':
+				
+				boyfriend.y += 360;
+				camPos.set(boyfriend.getGraphicMidpoint().x , boyfriend.getGraphicMidpoint().y - 600);
+			case 'senpai-angry':
+				
+				boyfriend.y += 360;
+				camPos.set(boyfriend.getGraphicMidpoint().x , boyfriend.getGraphicMidpoint().y - 600);
+			case 'spirit':
+				boyfriend.x -= 150;
+				boyfriend.y += 100;
+				camPos.set(boyfriend.getGraphicMidpoint().x + 300, boyfriend.getGraphicMidpoint().y);
+			default:
+
+				if(SONG.player1.startsWith('bf')){
+					boyfriend.y += 350;
+				}
+
+		}
+
+		if(! SONG.player1.startsWith('bf')){
+			boyfriend.x += boyfriend.width/2;
+
 		}
 
 		add(gf);
@@ -906,8 +951,6 @@ class PlayState extends MusicBeatState
 		
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
-		if (offsetTesting)
-			scoreTxt.x += 300;
 		add(scoreTxt);
 
 		replayTxt = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 75, healthBarBG.y + 100, 0, "REPLAY", 20);
@@ -2686,9 +2729,9 @@ class PlayState extends MusicBeatState
 						else
 						{	
 							
-							if(FlxG.save.data.dif == 2){
+							if(FlxG.save.data.dif != 0){
 								
-								health -= 0.075;
+								health -= 0.09;
 							}
 							
 							if(FlxG.save.data.dif == 3){
@@ -2697,8 +2740,10 @@ class PlayState extends MusicBeatState
 
 							}
 							vocals.volume = 0;
-							if (theFunne)
+							if (FlxG.save.data.dif != 1)
 								noteMiss(daNote.noteData, daNote);
+							else
+								misses++;
 						}
 	
 						daNote.active = false;
@@ -3037,9 +3082,14 @@ class PlayState extends MusicBeatState
 				case 'shit':
 					score = -300;
 					combo = 0;
-					misses++;
-					if(FlxG.save.data.dif != 0)
-						health -= 0.2;
+					if(FlxG.save.data.dif == 2){
+						misses++;
+						health -= 0.3;
+					}
+					if(FlxG.save.data.dif == 3){
+						health -= 0.5;
+					}
+
 					ss = false;
 					shits++;
 					if (FlxG.save.data.accuracyMod == 0)
@@ -3047,8 +3097,13 @@ class PlayState extends MusicBeatState
 				case 'bad':
 					daRating = 'bad';
 					score = 0;
-					if(FlxG.save.data.dif != 0)
-						health -= 0.06;
+					if(FlxG.save.data.dif == 2)
+						health -= 0.1;
+
+					if(FlxG.save.data.dif == 3){
+						health -= 0.3;
+					}
+
 					ss = false;
 					bads++;
 					if (FlxG.save.data.accuracyMod == 0)

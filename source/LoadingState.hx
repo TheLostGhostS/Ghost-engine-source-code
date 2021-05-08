@@ -100,18 +100,20 @@ class LoadingState extends MusicBeatState
 			function (lib)
 			{
 				callbacks = new MultiCallback(onLoad);
-				var introComplete = callbacks.add("introComplete");
+				
 				checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
 				checkLibrary("shared");
+				checkLibrary("characters");
 				if (PlayState.storyWeek > 0){
 					checkLibrary("week" + PlayState.storyWeek);
 					trace("Library checked");
 				}
 				else
 					checkLibrary("tutorial");
-				
+				var introComplete = callbacks.add("introComplete");
+
 				var fadeTime = 0.5;
 				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
 				new FlxTimer().start(fadeTime + MIN_TIME, function(_){ introComplete(); });
@@ -151,8 +153,21 @@ class LoadingState extends MusicBeatState
 				throw "Missing library: " + library;
 			
 			var callback = callbacks.add("library:" + library);
+			trace(library);
 			Assets.loadLibrary(library).onComplete(function (_) { callback(); });
 		}
+	}
+
+	public static function characterLibrary(library:String){
+		if (Assets.getLibrary(library) == null)
+		{
+			//if (!LimeAssets.libraryPaths.exists(library))
+			//	throw "Missing library: " + library;
+				
+			Assets.loadLibrary(library);
+		}
+
+
 	}
 	
 	override function beatHit()

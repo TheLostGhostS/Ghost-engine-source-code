@@ -26,6 +26,8 @@ class CoolUtil
 	{
 		var daList:Array<String> = Assets.getText(path).trim().split('\n');
 
+		trace(daList);
+
 		for (i in 0...daList.length)
 		{
 			daList[i] = daList[i].trim();
