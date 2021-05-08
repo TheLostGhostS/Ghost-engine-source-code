@@ -123,6 +123,7 @@ class PlayState extends MusicBeatState
 
 	private var gfSpeed:Int = 1;
 	private var health:Float = 1;
+	private var lerphealth:Float = 0;
 	private var combo:Int = 0;
 	public static var dismisses:Int = 0;
 	public static var misses:Int = 0;
@@ -939,7 +940,7 @@ class PlayState extends MusicBeatState
 		add(healthBarBG);
 
 		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-			'health', 0, 2);
+			'lerphealth', 0, 2);
 		healthBar.scrollFactor.set();
 		healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 		// healthBar
@@ -2162,6 +2163,15 @@ class PlayState extends MusicBeatState
 		*/
 		
 		var iconOffset:Int = 26;
+
+
+		if(lerphealth != health){
+			lerphealth = FlxMath.lerp(lerphealth, health, .2);
+			if( Math.abs(lerphealth - health) < .01){
+				lerphealth = health;
+			}
+		}
+
 
 		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset) + Math.cos(.7853)*addPulse;
 		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset) - Math.sin(.7853)*addPulse;
@@ -4178,9 +4188,9 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}
 
-		FlxTween.num(0.0, 40.0, .05, {type: ONESHOT, ease: FlxEase.linear, onComplete: 
+		FlxTween.num(0.0, 30.0, .04, {type: ONESHOT, ease: FlxEase.linear, onComplete: 
 			function(_) {
-				FlxTween.num(40.0, 0.0, .05, {type: ONESHOT, ease: FlxEase.linear}, icontween.bind());
+				FlxTween.num(30.0, 0.0, .04, {type: ONESHOT, ease: FlxEase.linear}, icontween.bind());
 			
 			}
 		

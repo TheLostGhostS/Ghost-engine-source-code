@@ -4,6 +4,16 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3]
+### [Added]
+- New option in the pause state
+### [Changed]
+- The way icons vibe in playstate and smothed the health animation
+
+## [1.1.2]
+### [Added]
+- I completely forgot what i did in this version lol
+
 ## [1.1.1]
 ### [Added]
 - An actual loading screen that is not gf with her animation stuck
