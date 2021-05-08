@@ -13,6 +13,11 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+
+#if windows
+import Discord.DiscordClient;
+#end
+
 /*
 if (accepted)
 		{
@@ -35,7 +40,7 @@ class PauseSubState extends MusicBeatSubstate
 	var difMenuShit:FlxTypedGroup<Alphabet>;
 	var gendifMenuShit:FlxTypedGroup<Alphabet>;
 
-	var mainmenuItems:Array<String> = ['Resume', 'Restart Song', 'Difficulty', 'General Difficulty','Practice mode' ,'Exit to menu'];
+	var mainmenuItems:Array<String> = ['Resume', 'Restart Song', 'Difficulty', 'General Difficulty','Practice mode', 'Exit level','Exit to menu'];
 	var dificultymenuItems:Array<String> = ['Easy', 'Normal', 'Hard','Back'];
 	var generaldificultymenuItems:Array<String> = ['Baby', 'Classic', 'Permissive', 'Geometry Dash','Back'];
 	var menuItems:Array<String> = [];
@@ -276,10 +281,32 @@ class PauseSubState extends MusicBeatSubstate
 
 				case "Geometry Dash":
 					changeGenDif(3);
+
+				case 'Exit level':
+
+					if(PlayState.isStoryMode){
+						#if windows
+							DiscordClient.changePresence("In the Menus", null);
+						#end
+				
+						FlxG.switchState(new StoryMenuState());
+
+					}else{
+
+						#if windows
+							DiscordClient.changePresence("In the Freeplay Menu", null);
+						#end
+				
+				
+						FlxG.switchState(new FreeplayState());
+
+					}
 				
 
 			}
 		}
+
+		
 
 		if (FlxG.keys.justPressed.J)
 		{

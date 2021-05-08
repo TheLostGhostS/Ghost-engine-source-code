@@ -143,6 +143,8 @@ class PlayState extends MusicBeatState
 
 	private var iconP1:HealthIcon;
 	private var iconP2:HealthIcon;
+	private var addPulse:Float;
+
 	private var camHUD:FlxCamera;
 	private var camGame:FlxCamera;
 
@@ -2151,17 +2153,21 @@ class PlayState extends MusicBeatState
 
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
-
+		/*
 		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
 		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
-
+		*/
+		
 		var iconOffset:Int = 26;
 
-		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
-		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset) + Math.cos(.7853)*addPulse;
+		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset) - Math.sin(.7853)*addPulse;
+
+		iconP1.y = healthBar.y - (iconP1.height / 2) + Math.cos(.7853)*addPulse;
+		iconP2.y = healthBar.y - (iconP2.height / 2) + Math.sin(.7853)*addPulse;
 
 		if (health > 2)
 			health = 2;
@@ -4157,6 +4163,12 @@ class PlayState extends MusicBeatState
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
 
+	
+
+	function icontween(addd:Float){
+		addPulse = addd; //i was feeling lazy when using this variable name, i didnt wanted to use this.add neither change the variable to something original
+	}
+
 	override function beatHit()
 	{
 		super.beatHit();
@@ -4165,6 +4177,16 @@ class PlayState extends MusicBeatState
 		{
 			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}
+
+		FlxTween.num(0.0, 40.0, .05, {type: ONESHOT, ease: FlxEase.linear, onComplete: 
+			function(_) {
+				FlxTween.num(40.0, 0.0, .05, {type: ONESHOT, ease: FlxEase.linear}, icontween.bind());
+			
+			}
+		
+		}, icontween.bind());
+
+		//FlxTween.num( 40.0, 0.0, .1, {type: ONESHOT, ease: FlxEase.linear}, icontween.bind());
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
@@ -4204,11 +4226,13 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03;
 		}
 
+		/*
 		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
+		*/
 
 		if (curBeat % gfSpeed == 0)
 		{
