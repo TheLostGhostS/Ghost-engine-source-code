@@ -199,7 +199,7 @@ class PlayState extends MusicBeatState
 	var initialPositionX:Array<Float> = [0,0];
 	var currentPositionX:Array<Float> = [0,0];
 	var initialPositionY:Array<Float> = [50,50];
-	var currentPositionY:Array<Float> = [200,400];
+	var currentPositionY:Array<Float> = [50,50];
 
 	var noteWidth:Float;
 	public static var holdNoteHieght:Float;
@@ -222,10 +222,10 @@ class PlayState extends MusicBeatState
 	private var Offset:Float = 13;
 
 	public var angle:Array<Float>   =   [0, 0, 0, 0, 0, 0, 0, 0];  //rotation of the sprite of the gray arrows
-	public var angleC:Array<Float>  =   [-90, 0, 180, 90, -90,  0,  180,  90];  //rotation of the incoming arrows
+	public var angleC:Array<Float>  =   [0, 0, 0, 0, 0,  0,  0,  0];  //rotation of the incoming arrows
 
 	public var angleD:Array<Float>  =   [180, 180,   0,   0, 180, 180,   0,   0];  //angle of rotation of the pivot of gray arrows
-	public var orbit:Array<Float>   =   [0, 0, 0, 0, 0, 0,  0, 0];  //orbit of the arrow, distance from the pivot
+	public var orbit:Array<Float>   =   [168, 56, 56, 168, 168, 56,  56, 168];  //orbit of the arrow, distance from the pivot
 
 	public var alpha:Array<Float>   =   [1, 1, 1, 1, 1, 1, 1, 1];  //the alpha of the arrows
 
