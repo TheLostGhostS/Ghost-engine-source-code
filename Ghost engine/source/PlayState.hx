@@ -199,9 +199,10 @@ class PlayState extends MusicBeatState
 	var initialPositionX:Array<Float> = [0,0];
 	var currentPositionX:Array<Float> = [0,0];
 	var initialPositionY:Array<Float> = [50,50];
-	var currentPositionY:Array<Float> = [50,50];
+	var currentPositionY:Array<Float> = [200,400];
 
 	var noteWidth:Float;
+	public static var holdNoteHieght:Float;
 	
 
 	public static var theFunne:Bool = true;
@@ -221,10 +222,10 @@ class PlayState extends MusicBeatState
 	private var Offset:Float = 13;
 
 	public var angle:Array<Float>   =   [0, 0, 0, 0, 0, 0, 0, 0];  //rotation of the sprite of the gray arrows
-	public var angleC:Array<Float>  =   [0, 0, 0, 0, 0, 0, 0, 0];  //rotation of the incoming arrows
+	public var angleC:Array<Float>  =   [-90, 0, 180, 90, -90,  0,  180,  90];  //rotation of the incoming arrows
 
 	public var angleD:Array<Float>  =   [180, 180,   0,   0, 180, 180,   0,   0];  //angle of rotation of the pivot of gray arrows
-	public var orbit:Array<Float>   =   [168, 56, 56, 168, 168, 56,  56, 168];  //orbit of the arrow, distance from the pivot
+	public var orbit:Array<Float>   =   [0, 0, 0, 0, 0, 0,  0, 0];  //orbit of the arrow, distance from the pivot
 
 	public var alpha:Array<Float>   =   [1, 1, 1, 1, 1, 1, 1, 1];  //the alpha of the arrows
 
@@ -381,7 +382,7 @@ class PlayState extends MusicBeatState
 				isHalloween = true;
 			}
 			case 'pico' | 'blammed' | 'philly': 
-					{
+			{
 					curStage = 'philly';
 
 					var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('philly/sky'));
@@ -1619,31 +1620,21 @@ class PlayState extends MusicBeatState
 
 				var susLength:Float = swagNote.sustainLength;
 
-				susLength = susLength / Conductor.stepCrochet;
+				susLength = susLength / (Conductor.stepCrochet);
 				unspawnNotes.push(swagNote);
 
 				for (susNote in 0...Math.floor(susLength))
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + 2*(Conductor.stepCrochet) , daNoteData, oldNote, true);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
 					sustainNote.mustPress = gottaHitNote;
-
-					if (sustainNote.mustPress)
-					{
-						sustainNote.x += FlxG.width / 2; // general offset
-					}
 				}
 
 				swagNote.mustPress = gottaHitNote;
-
-				if (swagNote.mustPress)
-				{
-					swagNote.x += FlxG.width / 2; // general offset
-				}
 			}
 			daBeats += 1;
 		}
@@ -1763,6 +1754,9 @@ class PlayState extends MusicBeatState
 				initialPositionX[player]=((FlxG.width / 16)*11);
 				babyArrow.x = ((FlxG.width / 16))*11 + (Note.swagWidth * Math.abs(i)) - Note.swagWidth * 2.5;
 				currentPositionX[player]=initialPositionX[player];
+
+				//FlxTween.num(angleC[i + 4], angleC[i + 4] + 360, 3, {ease: FlxEase.linear, type: PINGPONG}, function(s:Float){angleC[i + 4]=s;});
+
 			}
 
 			if (player == 0)
@@ -1771,6 +1765,8 @@ class PlayState extends MusicBeatState
 				initialPositionX[player]=((FlxG.width / 16)*3);
 				babyArrow.x = ((FlxG.width / 16)*3) + (Note.swagWidth * Math.abs(i)) - Note.swagWidth * 2.5;
 				currentPositionX[player]=initialPositionX[player];
+
+				//FlxTween.num(angleC[i], angleC[i] + 360, 3, {ease: FlxEase.linear, type: PINGPONG}, function(s:Float){angleC[i]=s;});
 			}
 
 			babyArrow.animation.play('static');
@@ -2128,6 +2124,15 @@ class PlayState extends MusicBeatState
 
 		}
 
+		if (FlxG.keys.pressed.SPACE){
+			for(i in 0...angleC.length){
+				angleC[i] += 1; 
+
+			}
+
+		}
+
+
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
 		{
 			persistentUpdate = false;
@@ -2173,11 +2178,11 @@ class PlayState extends MusicBeatState
 		}
 
 
-		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset) + Math.cos(.7853)*addPulse;
+		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset) + .707 * addPulse;
 		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset) - Math.sin(.7853)*addPulse;
 
-		iconP1.y = healthBar.y - (iconP1.height / 2) + Math.cos(.7853)*addPulse;
-		iconP2.y = healthBar.y - (iconP2.height / 2) + Math.sin(.7853)*addPulse;
+		iconP1.y = healthBar.y - (iconP1.height / 2) + .707 * addPulse;
+		iconP2.y = healthBar.y - (iconP2.height / 2) + .707 * addPulse;
 
 		if (health > 2)
 			health = 2;
@@ -2492,15 +2497,15 @@ class PlayState extends MusicBeatState
 					strumLineNotes.members[i].angle = angle[i];
 				}
 
-				if(strumLineNotes.members[i].alpha != alpha[i]){
-					if(alpha[i] < 0){
-						strumLineNotes.members[i].alpha = 0;
-					}else if(alpha[i] > 1){
-						strumLineNotes.members[i].alpha = 1;
-					}else{
-						strumLineNotes.members[i].alpha = alpha[i];
-					}
+				
+				if(alpha[i] < 0){
+					strumLineNotes.members[i].alpha = 0;
+				}else if(alpha[i] > 1){
+					strumLineNotes.members[i].alpha = 1;
+				}else{
+					strumLineNotes.members[i].alpha = alpha[i] * (strumLineNotes.members[i].animation.curAnim.name != 'static' ? 1 : .8);
 				}
+				
 
 
 				if(strumLineNotes.members[i].animation.curAnim.name == "confirm" && curStage != "school" && curStage != "schoolEvil" && strumLineNotes.members[i].angle != 0){
@@ -2537,16 +2542,15 @@ class PlayState extends MusicBeatState
 
 					}
 					
-					if (daNote.y > FlxG.height)
-					{
-						daNote.active = false;
-						daNote.visible = false;
-					}
-					else
-					{
+					if(!daNote.tooLate){
 						daNote.visible = true;
 						daNote.active = true;
+					}else{
+						daNote.visible = false;
+						daNote.active = false;
+
 					}
+					
 
 					if(daNote.mustPress){
 						
@@ -2594,7 +2598,9 @@ class PlayState extends MusicBeatState
 								case 2:
 									dad.playAnim('singUP' + altAnim, true);
 									enemyStrums.members[2].animation.play('confirm');
-									//enemyStrums.members[2].offset.set(-13, -13);´
+									//enemyStrums.members[2].offset.set(-13, -13);
+
+									
 
 									enemyStrums.members[2].centerOffsets();
 									enemyStrums.members[2].offset.set(enemyStrums.members[2].offset.x-Offset, enemyStrums.members[2].offset.y-Offset);
@@ -2609,6 +2615,8 @@ class PlayState extends MusicBeatState
 									//enemyStrums.members[3].offset.y=-noteWidth;
 
 									
+
+									
 									enemyStrums.members[3].centerOffsets();
 									enemyStrums.members[3].offset.set(enemyStrums.members[3].offset.x-Offset, enemyStrums.members[3].offset.y-Offset);
 									
@@ -2620,6 +2628,8 @@ class PlayState extends MusicBeatState
 									enemyStrums.members[1].animation.play('confirm');
 									//enemyStrums.members[1].offset.x=-noteWidth;
 									//enemyStrums.members[1].offset.y=-noteWidth;
+
+									
 									
 									
 									enemyStrums.members[1].centerOffsets();
@@ -2633,6 +2643,7 @@ class PlayState extends MusicBeatState
 									enemyStrums.members[0].animation.play('confirm');
 									//enemyStrums.members[0].offset.x=-noteWidth;
 									//enemyStrums.members[0].offset.y=-noteWidth;
+
 									
 									
 									enemyStrums.members[0].centerOffsets();
@@ -2657,70 +2668,159 @@ class PlayState extends MusicBeatState
 					
 					
 					
-
-					//for future reference
 					if(daNote.mustPress){
 
-
-						//daNote.y = (playerStrums.members[daNote.noteData].y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2)));
-						//daNote.x = playerStrums.members[daNote.noteData].x;
-
-
-						daNote.y = playerStrums.members[daNote.noteData].y - (Math.cos(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
-						daNote.x = playerStrums.members[daNote.noteData].x - (Math.sin(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 						
-						if(daNote.alpha != playerStrums.members[daNote.noteData].alpha){
 
-							daNote.alpha = playerStrums.members[daNote.noteData].alpha;
+						daNote.y = playerStrums.members[daNote.noteData].y - 
+						(Math.cos(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * 
+						(0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 
-						}
+						daNote.x = playerStrums.members[daNote.noteData].x - 
+						(Math.sin(angleC[daNote.noteData + 4]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * 
+						(0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
+						
+						if(daNote.active){
 
-						if(daNote.animation != null){
-							
-							if(!daNote.isSustainNote){
-								daNote.angle = angle[daNote.noteData + 4];
-							}else{
-								daNote.angle = -angleC[daNote.noteData + 4];
+							//if(daNote.alpha != alpha[daNote.noteData + 4]){
+
+								if(! daNote.isSustainNote){
+
+									daNote.alpha = alpha[daNote.noteData + 4];
+								}else{
+									daNote.alpha = alpha[daNote.noteData + 4] * .6;
+
+								}
+
+							//}
+
+							if(daNote.animation != null){
+								if(!daNote.isSustainNote){
+									daNote.angle =  angle[daNote.noteData + 4];
+								}else{
+									daNote.angle = -angleC[daNote.noteData + 4];
+								}
 							}
-
+						
 						}
 
-						if(daNote.isSustainNote){
-							daNote.x += Math.cos(angleC[daNote.noteData+4])*noteWidth/2;
-							daNote.x -= Math.cos(angleC[daNote.noteData+4])*daNote.width/2;
-							daNote.y += Math.sin(angleC[daNote.noteData+4])*noteWidth/2;
-							daNote.y -= Math.sin(angleC[daNote.noteData+4])*daNote.width/2;
+						if(daNote.isSustainNote && curStage != 'school' && curStage != 'schoolEvil'){
+
+							daNote.x += Math.cos( -angleC[daNote.noteData + 4] * (Math.PI/180)) * noteWidth/2;
+
+							daNote.x -= Math.cos( -angleC[daNote.noteData + 4] * (Math.PI/180)) * 17.34;
+
+							daNote.y += Math.sin( -angleC[daNote.noteData + 4] * (Math.PI/180)) * noteWidth/2;
+
+							daNote.y -= Math.sin( -angleC[daNote.noteData + 4] * (Math.PI/180)) * 17.34;
+
+						}else if(daNote.isSustainNote){
+
+							daNote.x += Math.abs(Math.cos( -angleC[daNote.noteData + 4] * (Math.PI/180)) * noteWidth/2);
+
+							daNote.x -= Math.abs(Math.cos( -angleC[daNote.noteData + 4] * (Math.PI/180)) * 19);
+
+							daNote.y += Math.abs(Math.sin( -angleC[daNote.noteData + 4] * (Math.PI/180)) * noteWidth/2);
+
+							daNote.y -= Math.abs(Math.sin( -angleC[daNote.noteData + 4] * (Math.PI/180)) * 19);
+
+							daNote.x += Math.sin(-angleC[daNote.noteData + 4] * (Math.PI/180)) * (SONG.speed - 1) * ((44 * holdNoteHieght) - 33);
+							daNote.y -= Math.cos(-angleC[daNote.noteData + 4] * (Math.PI/180)) * (SONG.speed - 1) * ((44 * holdNoteHieght) - 33);
+
+
+						}
 							
-						}
+							
+							if(daNote.animation != null   && curStage != 'school' && curStage != 'schoolEvil'){
+								if(daNote.animation.curAnim.name.endsWith('end')){
+									daNote.x += Math.sin(-angleC[daNote.noteData + 4] * (Math.PI/180)) * ((44 * holdNoteHieght) - 33);
+									daNote.y -= Math.cos(-angleC[daNote.noteData + 4] * (Math.PI/180)) * ((44 * holdNoteHieght) - 33);
+									
+
+								}
+							}
+								
+							
+						 // */
 
 
 					}else{
-						daNote.y = enemyStrums.members[daNote.noteData].y - (Math.cos(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
-						daNote.x = enemyStrums.members[daNote.noteData].x - (Math.sin(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
 
-						if(daNote.alpha != enemyStrums.members[daNote.noteData].alpha){
+						daNote.y = enemyStrums.members[daNote.noteData].y 
+						- (Math.cos(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * 
+						(0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
+						
 
-							daNote.alpha = enemyStrums.members[daNote.noteData].alpha;
+						daNote.x = enemyStrums.members[daNote.noteData].x - 
+						(Math.sin(angleC[daNote.noteData]* Math.PI/180)*((Conductor.songPosition - daNote.strumTime) * 
+						(0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2))));
+
+						if(daNote.active){
+							//if(daNote.alpha != alpha[daNote.noteData]){
+
+								if(! daNote.isSustainNote){
+
+									daNote.alpha = alpha[daNote.noteData];
+
+								}else{
+
+									daNote.alpha = alpha[daNote.noteData] * .6;
+									
+
+								}
+
+							//}
+						
+
+							if(daNote.animation != null){
 							
-						}
+								if(!daNote.isSustainNote){
+									daNote.angle =  angle[daNote.noteData];
+								}else{
+									daNote.angle = -angleC[daNote.noteData];
+								}
 
-						if(daNote.animation != null){
-							
-							if(!daNote.isSustainNote){
-								daNote.angle = angle[daNote.noteData];
-							}else{
-								daNote.angle = -angleC[daNote.noteData];
 							}
-
 						}
 
-						if(daNote.isSustainNote){
-							daNote.x += Math.cos(angleC[daNote.noteData])*noteWidth/2;
-							daNote.x -= Math.cos(angleC[daNote.noteData])*daNote.width/2;
-							daNote.y += Math.sin(angleC[daNote.noteData])*noteWidth/2;
-							daNote.y -= Math.sin(angleC[daNote.noteData])*daNote.width/2;
-							
+						if(daNote.isSustainNote && curStage != 'school' && curStage != 'schoolEvil'){
+
+							daNote.x += Math.cos( -angleC[daNote.noteData] * (Math.PI/180)) * noteWidth/2;
+
+							daNote.x -= Math.cos( -angleC[daNote.noteData] * (Math.PI/180)) * 17.34;
+
+							daNote.y += Math.sin( -angleC[daNote.noteData] * (Math.PI/180)) * noteWidth/2;
+
+							daNote.y -= Math.sin( -angleC[daNote.noteData] * (Math.PI/180)) * 17.34;
+
+						}else if(daNote.isSustainNote){
+
+							daNote.x += Math.abs(Math.cos( -angleC[daNote.noteData] * (Math.PI/180)) * noteWidth/2);
+
+							daNote.x -= Math.abs(Math.cos( -angleC[daNote.noteData] * (Math.PI/180)) * 19);
+
+							daNote.y += Math.abs(Math.sin( -angleC[daNote.noteData] * (Math.PI/180)) * noteWidth/2);
+
+							daNote.y -= Math.abs(Math.sin( -angleC[daNote.noteData] * (Math.PI/180)) * 19);
+
+							daNote.x += Math.sin(-angleC[daNote.noteData] * (Math.PI/180)) * (SONG.speed - 1) * ((44 * holdNoteHieght) - 33);
+							daNote.y -= Math.cos(-angleC[daNote.noteData] * (Math.PI/180)) * (SONG.speed - 1) * ((44 * holdNoteHieght) - 33);
+
+
 						}
+						
+						if(daNote.animation != null   && curStage != 'school' && curStage != 'schoolEvil'){
+							if(daNote.animation.curAnim.name.endsWith('end')){
+								daNote.x += Math.sin(-angleC[daNote.noteData] * (Math.PI/180)) * ((44 * holdNoteHieght) - 33);
+								daNote.y -= Math.cos(-angleC[daNote.noteData] * (Math.PI/180)) * ((44 * holdNoteHieght) - 33);
+								
+
+
+							}
+						}
+						
+						
+						// */
 
 					}
 
@@ -2733,11 +2833,14 @@ class PlayState extends MusicBeatState
 						//trace(daNote.y);
 					// WIP interpolation shit? Need to fix the pause issue
 					// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
-	
-					if (daNote.y < -daNote.height && daNote.mustPress)
+
+
+					//FlxTween.tween(this, {alpha: 0}, .4, {ease: FlxEase.sineIn});
+					if (daNote.tooLate && daNote.mustPress)
 					{
 						if (daNote.isSustainNote && daNote.wasGoodHit)
-						{
+						{	
+							
 							daNote.kill();
 							notes.remove(daNote, true);
 							daNote.destroy();
@@ -2770,6 +2873,8 @@ class PlayState extends MusicBeatState
 						daNote.destroy();
 					}
 				});
+
+				
 
 				if(enemyStrums.members[0] != null && enemyStrums.members[1] != null && enemyStrums.members[2] != null && enemyStrums.members[3] != null)
 				{
@@ -2807,7 +2912,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 
-				}
+				} // */
 
 
 				if(playerStrums.members[0] != null && playerStrums.members[1] != null && playerStrums.members[2] != null && playerStrums.members[3] != null)
@@ -2855,67 +2960,6 @@ class PlayState extends MusicBeatState
 
 
 				}
-
-					//
-
-				
-
-				/*if (FlxG.save.data.downscroll)
-					daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (-0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2)));
-				else
-					daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? SONG.speed : FlxG.save.data.scrollSpeed, 2)));
-
-				if (daNote.mustPress && !daNote.modifiedByLua)
-				{
-					daNote.visible = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].visible;
-					daNote.x = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].x;
-					if (!daNote.isSustainNote)
-						daNote.angle = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].angle;
-					daNote.alpha = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].alpha;
-				}
-				else if (!daNote.wasGoodHit && !daNote.modifiedByLua)
-				{
-					daNote.visible = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].visible;
-					daNote.x = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].x;
-					if (!daNote.isSustainNote)
-						daNote.angle = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].angle;
-					daNote.alpha = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].alpha;
-				}
-				
-				
-
-				if (daNote.isSustainNote)
-					daNote.x += daNote.width / 2 + 17;
-				
-
-				//trace(daNote.y);
-				// WIP interpolation shit? Need to fix the pause issue
-				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
-
-				if ((daNote.y < -daNote.height && !FlxG.save.data.downscroll || daNote.y >= strumLine.y + 106 && FlxG.save.data.downscroll) && daNote.mustPress)
-				{
-					if (daNote.isSustainNote && daNote.wasGoodHit)
-					{
-						daNote.kill();
-						notes.remove(daNote, true);
-						daNote.destroy();
-					}
-					else
-					{
-						health -= 0.075;
-						vocals.volume = 0;
-						if (theFunne)
-							noteMiss(daNote.noteData, daNote);
-					}
-
-					daNote.active = false;
-					daNote.visible = false;
-
-					daNote.kill();
-					notes.remove(daNote, true);
-					daNote.destroy();
-				}*/
-
 
 			}
 
@@ -3092,7 +3136,7 @@ class PlayState extends MusicBeatState
 				totalNotesHit += wife;
 
 			var daRating = daNote.rating;
-
+			
 			switch(daRating)
 			{
 				case 'shit':
@@ -4031,6 +4075,9 @@ class PlayState extends MusicBeatState
 					if (Math.abs(note.noteData) == spr.ID)
 					{
 						spr.animation.play('confirm', true);
+
+						
+
 						if(auto && !curStage.startsWith('school')){
 							spr.centerOffsets();
 							spr.offset.x -= 13;

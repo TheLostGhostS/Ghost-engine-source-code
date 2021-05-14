@@ -24,6 +24,7 @@ class Note extends FlxSprite
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
+	public var isSusEnd:Bool = false;
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -41,7 +42,11 @@ class Note extends FlxSprite
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
 		super();
-
+		if(PlayState.curStage != 'school' && PlayState.curStage != 'schoolEvil'){
+			PlayState.holdNoteHieght=Conductor.stepCrochet / 100 * (0.018 * PlayState.SONG.bpm * PlayState.SONG.speed * (PlayState.SONG.bpm * PlayState.SONG.bpm * .000050544 + PlayState.SONG.bpm * -.018736 + 2.202))* FlxG.save.data.scrollSpeed;
+		}else{
+			PlayState.holdNoteHieght=Conductor.stepCrochet / 100 * 1.8  * FlxG.save.data.scrollSpeed;
+		}
 		if (prevNote == null)
 			prevNote = this;
 
@@ -51,6 +56,10 @@ class Note extends FlxSprite
 		x += 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
+		//Note from Ghost: I discovered what does this does, it makes note spawn offscreen, now what a surprise isnt it? well i just 
+		//ignored that comment and got mad because there were frames where note appeared out of nowhere and disappeared
+		//im just so inteligent ya know
+		
 		this.strumTime = strumTime;
 
 		if (this.strumTime < 0 )
@@ -114,16 +123,12 @@ class Note extends FlxSprite
 		switch (noteData)
 		{
 			case 0:
-				x += swagWidth * 0;
 				animation.play('purpleScroll');
 			case 1:
-				x += swagWidth * 1;
 				animation.play('blueScroll');
 			case 2:
-				x += swagWidth * 2;
 				animation.play('greenScroll');
 			case 3:
-				x += swagWidth * 3;
 				animation.play('redScroll');
 		}
 
@@ -132,50 +137,60 @@ class Note extends FlxSprite
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
-		// aight but dont beat me :(  -Ghost
+		
+		// aight but dont beat me :(  
+		// -Ghost
 
 		if (isSustainNote && prevNote != null)
 		{
 			noteScore * 0.2;
-			alpha = 0.6;
+			
 
-			x += width / 2;
+			//x += width / 2;
 
 			switch (noteData)
 			{
 				case 2:
 					animation.play('greenholdend');
+					isSusEnd = true;
 				case 3:
 					animation.play('redholdend');
+					isSusEnd = true;
 				case 1:
 					animation.play('blueholdend');
+					isSusEnd = true;
 				case 0:
 					animation.play('purpleholdend');
+					isSusEnd = true;
 			}
 
-			updateHitbox();
+			//updateHitbox();
 
-			x -= width / 2;
-
-			if (PlayState.curStage.startsWith('school'))
-				x += 30;
+			//x -= width / 2;
 
 			if (prevNote.isSustainNote)
-			{
+			{	
+				
+
 				switch (prevNote.noteData)
 				{
 					case 0:
 						prevNote.animation.play('purplehold');
+						isSusEnd = false;
 					case 1:
 						prevNote.animation.play('bluehold');
+						isSusEnd = false;
 					case 2:
 						prevNote.animation.play('greenhold');
+						isSusEnd = false;
 					case 3:
 						prevNote.animation.play('redhold');
+						isSusEnd = false;
 				}
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.8 * FlxG.save.data.scrollSpeed;
-				prevNote.updateHitbox();
+						prevNote.scale.y *= PlayState.holdNoteHieght;
+						
+				//prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 		}
@@ -189,6 +204,9 @@ class Note extends FlxSprite
 
 		if (mustPress)
 		{	
+
+
+			
 
 			if(strumTime-400 <= Conductor.songPosition){
 
@@ -206,14 +224,29 @@ class Note extends FlxSprite
 			
 
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
-			if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5)){
-				canBeHit = true;
-				
-			}
-			else
-			{
-				canBeHit = false;
+			
+			if(!isSustainNote){
+				if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset && strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5)){
+
+					canBeHit = true;
+					
+				}
+				else
+				{
+					canBeHit = false;
+				}
+			}else{
+
+				if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset && strumTime < Conductor.songPosition +  (250 / (PlayState.SONG.bpm/100)) ){
+
+					canBeHit = true;
+					
+				}
+				else
+				{
+					canBeHit = false;
+				}
+
 			}
 
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit){
@@ -227,8 +260,8 @@ class Note extends FlxSprite
 				if (strumTime <= Conductor.songPosition && !isSustainNote){
 					wasGoodHit = true;
 					
-				}
-				if (strumTime-100 <= Conductor.songPosition && isSustainNote){
+				} 
+				if (strumTime - (250 / (PlayState.SONG.bpm/100) ) <= Conductor.songPosition && isSustainNote){
 					wasGoodHit = true;
 					
 				}
@@ -237,6 +270,9 @@ class Note extends FlxSprite
 		}
 		else
 		{
+
+			
+
 			canBeHit = false;
 			if(strumTime-300 <= Conductor.songPosition){
 				if(PlayState.daddance){
@@ -251,15 +287,12 @@ class Note extends FlxSprite
 				wasGoodHit = true;
 				
 			}
-			if (strumTime-100 <= Conductor.songPosition && isSustainNote){
+			if (strumTime - (250 / (PlayState.SONG.bpm/100)) <= Conductor.songPosition && isSustainNote){
 				wasGoodHit = true;
 				
 			}
 		}
 
-		if (tooLate)
-		{
-			FlxTween.tween(this, {alpha: 0}, .4, {ease: FlxEase.sineIn});
-		}
+		
 	}
 }
