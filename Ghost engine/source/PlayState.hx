@@ -2124,13 +2124,13 @@ class PlayState extends MusicBeatState
 
 		}
 
-		if (FlxG.keys.pressed.SPACE){
+		/*if (FlxG.keys.pressed.SPACE){
 			for(i in 0...angleC.length){
 				angleC[i] += 1; 
 
 			}
 
-		}
+		}*/
 
 
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
