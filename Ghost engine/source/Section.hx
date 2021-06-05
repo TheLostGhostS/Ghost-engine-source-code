@@ -1,5 +1,9 @@
 package;
 
+import Movement.EffectParams;
+
+using StringTools;
+
 typedef SwagSection =
 {
 	var sectionNotes:Array<Dynamic>;
@@ -9,7 +13,8 @@ typedef SwagSection =
 	var bpm:Int;
 	var changeBPM:Bool;
 	var altAnim:Bool;
-	var effects:Array<Dynamic>;
+	var spawn:Float;
+	var effects:Array<EffectParams>;
 }
 
 

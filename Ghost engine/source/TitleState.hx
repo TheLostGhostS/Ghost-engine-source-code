@@ -88,7 +88,7 @@ class TitleState extends MusicBeatState
 		
 		
 
-		GhostImprovedKadeEngineData.initSave();
+		GhostEngineData.initSave();
 
 		Highscore.load();
 

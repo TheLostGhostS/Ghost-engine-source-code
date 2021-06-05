@@ -392,9 +392,13 @@ class StoryMenuState extends MusicBeatState
 		txtTracklist.text = "Tracks\n";
 		var stringThing:Array<String> = weekData[curWeek];
 
+		txtTracklist.text += "\n";
+
 		for (i in stringThing)
-		{
-			txtTracklist.text += "\n" + i;
+		{	
+			
+
+			txtTracklist.text += i + "\n";
 		}
 
 		txtTracklist.text = txtTracklist.text.toUpperCase();

@@ -187,7 +187,7 @@ class LoadingState extends MusicBeatState
 		if(callbacks != null){
 			progress = Std.int( FlxMath.lerp(progress, (callbacks.getFired().length + 1 / (callbacks.length) ) * 100, .15) ) ;
 			//FlxTween.num(progress, 100, .4, {ease: FlxEase.linear, type:ONESHOT}, finish.bind() );
-			trace(callbacks.getUnfired().length);
+			//trace(callbacks.getUnfired().length);
 
 			if(callbacks.getUnfired().length == 0){
 				FlxTween.num(progress, 100, .4, {ease: FlxEase.linear, type:ONESHOT}, finish.bind() );

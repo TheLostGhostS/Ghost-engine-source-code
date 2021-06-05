@@ -18,6 +18,7 @@ typedef BPMChangeEvent =
 class Conductor
 {
 	public static var bpm:Int = 100;
+	public static var timeBpm:Float = (1/ (bpm >= 100 ? bpm : 100) )*5000;
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float;
@@ -39,6 +40,7 @@ class Conductor
 		Conductor.safeFrames = FlxG.save.data.frames;
 		Conductor.safeZoneOffset = Math.floor((Conductor.safeFrames / 60) * 1000);
 		Conductor.timeScale = Conductor.safeZoneOffset / 166;
+		trace(Conductor.safeZoneOffset);
 	}
 
 	public static function mapBPMChanges(song:SwagSong)
@@ -74,5 +76,6 @@ class Conductor
 
 		crochet = ((60 / bpm) * 1000);
 		stepCrochet = crochet / 4;
+		timeBpm = (1/ (bpm >= 100 ? bpm : 100) )*5000;
 	}
 }

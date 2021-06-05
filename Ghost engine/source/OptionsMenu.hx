@@ -41,7 +41,8 @@ class OptionsMenu extends MusicBeatState
 			#end
 			new AccuracyOption("Display accuracy information."),
 			new NPSDisplayOption("Shows your current Notes Per Second."),
-			new PauseMode("Select if the game is auto paused or not")
+			new PauseMode("Select if the game is auto paused or not"),
+			new EffectsCategory("Select if you want game to have effects")
 		]),
 		
 		new OptionCatagory("Misc", [

@@ -79,7 +79,10 @@
                     ]
                 ],
                 "typeOfSection": 0,
-                "altAnim": false
+                "altAnim": false,
+				"spawn": 1500,
+				"effects": [				
+				]
             },
             {
                 "lengthInSteps": 16,

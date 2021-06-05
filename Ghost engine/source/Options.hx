@@ -456,6 +456,28 @@ class PauseMode extends Option
 	}
 }
 
+class EffectsCategory extends Option{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	
+	public override function press():Bool
+	{
+		FlxG.save.data.effects = !FlxG.save.data.effects;
+			
+		display = updateDisplay();
+		return true;
+	}
+	
+	private override function updateDisplay():String
+	{
+		return "Effects " + (!FlxG.save.data.effects ? "off" : "on");
+	}
+
+}
+
 
 class ReplayOption extends Option
 {

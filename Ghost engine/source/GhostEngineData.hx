@@ -1,7 +1,7 @@
 import openfl.Lib;
 import flixel.FlxG;
 
-class GhostImprovedKadeEngineData
+class GhostEngineData
 {
     public static function initSave()
     {
@@ -13,6 +13,9 @@ class GhostImprovedKadeEngineData
 
 		if(FlxG.save.data.autopause == null)
 			FlxG.save.data.autopause = false;
+
+		if(FlxG.save.data.effects == null)
+			FlxG.save.data.effects = true;
 
 		if (FlxG.save.data.practice== null)
 			FlxG.save.data.practice = false;

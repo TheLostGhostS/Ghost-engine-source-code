@@ -12,6 +12,7 @@ import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 
 #if windows
@@ -50,9 +51,16 @@ class PauseSubState extends MusicBeatSubstate
 
 	var practice:FlxText;
 
+	public static var tweens:FlxTweenManager;
+
 	public function new(x:Float, y:Float)
 	{
 		super();
+		FlxTween.globalManager.active = false;
+		//FlxTimer.globalManager.active = false;
+
+		add(tweens = new FlxTweenManager());
+		
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -103,17 +111,18 @@ class PauseSubState extends MusicBeatSubstate
 		generalDifficulty.x = FlxG.width - (generalDifficulty.width + 20);
 		practice.x = FlxG.width - (practice.width + 20);
 
-		FlxTween.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
-		FlxTween.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
-		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
-		FlxTween.tween(generalDifficulty, {alpha: 1, y: generalDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
+		
+
+		tweens.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
+		tweens.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
+		tweens.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
+		tweens.tween(generalDifficulty, {alpha: 1, y: generalDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
 		if(FlxG.save.data.practice){
-			FlxTween.tween(practice, {alpha: 1, y: practice.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.9});
+			tweens.tween(practice, {alpha: 1, y: practice.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.9});
 		}else{
 			practice.y += 5;
 
 		}
-
 
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
@@ -186,7 +195,13 @@ class PauseSubState extends MusicBeatSubstate
 
 		if (accepted)
 		{
+			
 			var daSelected:String = menuItems[curSelected];
+
+			FlxTween.globalManager.active = true;
+			//FlxTimer.globalManager.active = true;
+			
+			
 
 			switch (daSelected)
 			{

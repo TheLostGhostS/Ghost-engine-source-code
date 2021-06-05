@@ -4,6 +4,20 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Next version is gonna have compatibility with replay state and costumised keybinds
+(might also improve i little more the charting state to have features of the new fnf version)
+
+## [1.2]
+### [Changed]
+- NEW EFFECTS, NOW LEVELS ARE TOTALLY COMPATIBLE WITH MOVEMENT YEEYYYY!!!!
+- Fixed a little more the hold notes (i think lol)
+- Option to desactivate effects on the menu
+- Charting for the effects
+- Pico hard, Satin Patin hard, tutorial hard, Spookeez hard now have effects charted!!!
+### [Changed]
+- The way enemy presses their stums
+- Fixed Storymenu thing where it doesnt show all the songs
+
 ## [1.1.4]
 ### [Changed]
 - The way hold notes are displayed, fixed them 90% of the way
