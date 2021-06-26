@@ -5,6 +5,7 @@ import flixel.tweens.motion.LinearPath;
 import flixel.FlxBasic;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.FlxG;
 
 using StringTools;
 
@@ -70,6 +71,43 @@ class Effect extends FlxBasic
 
         if(duration <= 0){
             duration = 0.005;
+
+        }
+
+        if(FlxG.save.data.downscroll && !all){
+
+            if(set){
+
+                if(target == 'y'){
+                    quantity = 615 - quantity;
+                    trace(quantity);
+                }
+
+                if(target == 'incoming' ){
+                    quantity = 180 - quantity;
+                }
+
+                if(target == 'spriteRot' || target == 'pivotRot'){
+                    quantity = 360 - quantity;
+                }
+
+                
+
+            }else{
+
+                if(target == 'incoming' || target == 'spriteRot' || target == 'pivotRot' || target == 'y'){
+                    quantity *= -1;
+                }
+
+            }
+
+            
+            
+        }
+
+        if((target == 'incoming' || target == 'spriteRot' || target == 'pivotRot') && !all){
+
+
 
         }
 

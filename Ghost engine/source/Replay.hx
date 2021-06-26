@@ -31,6 +31,8 @@ typedef ReplayJSON =
     public var songDiff:Int;
     public var keyPresses:Array<KeyPress>;
     public var keyReleases:Array<KeyRelease>;
+    public var effects:Bool;
+    public var generalDif:Int;
 }
 
 class Replay
@@ -48,7 +50,9 @@ class Replay
             keyPresses: [],
             keyReleases: [],
             replayGameVer: version,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            effects: true,
+            generalDif: 1
         };
     }
 
@@ -71,7 +75,9 @@ class Replay
             "keyPresses": replay.keyPresses,
             "keyReleases": replay.keyReleases,
             "timestamp": Date.now(),
-            "replayGameVer": version
+            "replayGameVer": version,
+            "effects": PlayState.activeEffects,
+            "generalDif": PlayState.generalDif
         };
 
         var data:String = Json.stringify(json);

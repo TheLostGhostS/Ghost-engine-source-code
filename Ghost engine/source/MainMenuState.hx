@@ -38,7 +38,7 @@ class MainMenuState extends MusicBeatState
 
 	public static var nightly:String = "";
 
-	public static var ghostEngineVer:String = "1.2" + nightly;
+	public static var ghostEngineVer:String = "1.2.1" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
 	var magenta:FlxSprite;
@@ -116,16 +116,6 @@ class MainMenuState extends MusicBeatState
 		else
 			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
 
-
-		switch(FlxG.save.data.controls){
-			case 0:
-				controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-			case 1:
-				controls.setKeyboardScheme(KeyboardScheme.Solo, true);
-			case 2:
-				controls.setKeyboardScheme(KeyboardScheme.Solo2, true);
-
-		}
 
 		changeItem();
 

@@ -60,6 +60,13 @@ class PauseSubState extends MusicBeatSubstate
 		//FlxTimer.globalManager.active = false;
 
 		add(tweens = new FlxTweenManager());
+
+		if(! PlayState.loadRep){
+			mainmenuItems = ['Resume', 'Restart Song', 'Difficulty', 'General Difficulty','Practice mode', 'Exit level','Exit to menu'];
+		}else{
+			mainmenuItems = ['Resume', 'Restart Song', 'Exit level','Exit to menu'];
+
+		}
 		
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
@@ -308,12 +315,21 @@ class PauseSubState extends MusicBeatSubstate
 
 					}else{
 
-						#if windows
-							DiscordClient.changePresence("In the Freeplay Menu", null);
+						#if desktop
+							if(!PlayState.loadRep){
+								trace('WENT BACK TO FREEPLAY??');
+								#if windows
+									DiscordClient.changePresence("In the Freeplay Menu", null);
+								#end
+								FlxG.switchState(new FreeplayState());
+							}else{
+								FlxG.switchState(new LoadReplayState());
+							}
 						#end
-				
-				
-						FlxG.switchState(new FreeplayState());
+
+						#if !desktop
+							FlxG.switchState(new FreeplayState());
+						#end
 
 					}
 				

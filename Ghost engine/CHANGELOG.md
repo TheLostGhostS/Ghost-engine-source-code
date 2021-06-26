@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Next version is gonna have compatibility with replay state and costumised keybinds
 (might also improve i little more the charting state to have features of the new fnf version)
 
+## [1.2.1]
+### [Changed]
+- Added Replay to browser
+- Added downscroll option again and copatible with effects
+- Now Story Menu has colors :D
+- Custom keybinds that i totally didnt took directly from kade engine 1.5.2 no i obvously didnt
+- Improved key presses for the enemy
+### [Fixed]
+- Replay now replays the presses correctly
+- The note strum animation (Credit to AceDev)
+- Charting state for the notes and getting ready for 1.3
+
+
 ## [1.2]
 ### [Changed]
 - NEW EFFECTS, NOW LEVELS ARE TOTALLY COMPATIBLE WITH MOVEMENT YEEYYYY!!!!

@@ -19,44 +19,12 @@ import Discord.DiscordClient;
 
 using StringTools;
 
-class Songinfo{
 
-	public var Name:String;
-	public var bpm:Int;
-
-	public function new(Name:String, bpm:Int){
-
-		this.Name=Name;
-		this.bpm=bpm;
-
-	}
-
-}
 
 class FreeplayState extends MusicBeatState
 {
-	var songsbpm:Array<Songinfo> = [
-		new Songinfo("Tutorial", 100),
-		new Songinfo("Bopeebo", 100),
-		new Songinfo("Fresh", 120),
-		new Songinfo("Dadbattle", 180),
-		new Songinfo("Spookeez", 150),
-		new Songinfo("South", 165),
-		new Songinfo("Monster", 95),
-		new Songinfo("Pico", 150),
-		new Songinfo("Philly", 175),
-		new Songinfo("Blammed", 165),
-		new Songinfo("Satin-Panties", 110),
-		new Songinfo("High", 125),
-		new Songinfo("Milf", 180),
-		new Songinfo("Cocoa", 100),
-		new Songinfo("Eggnog", 150),
-		new Songinfo("Winter-Horrorland", 95),
-		new Songinfo("Senpai", 144),
-		new Songinfo("Roses", 120),
-		new Songinfo("Thorns", 190)
-
-	];
+	
+	
 
 	/*var SONGS:Array<Songinfo> = [
 		new("tutorial", )
@@ -107,6 +75,12 @@ class FreeplayState extends MusicBeatState
 	{
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
+		for (i in 0...initSonglist.length)
+		{
+			var data:Array<String> = initSonglist[i].split(':');
+			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1]));
+		}
+
 		PulseInterv = new FlxTimer();
 		PulseInterv.time = .5;
 		PulseInterv.loops = 0;
@@ -118,16 +92,6 @@ class FreeplayState extends MusicBeatState
 		
 
 		
-		
-
-		
-
-		for (i in 0...initSonglist.length)
-		{
-			var data:Array<String> = initSonglist[i].split(':');
-			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1]));
-		}
-
 		/* 
 			if (FlxG.sound.music != null)
 			{
@@ -293,6 +257,7 @@ class FreeplayState extends MusicBeatState
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
 			PlayState.storyWeek = songs[curSelected].week;
+			PlayState.loadRep = false;
 			trace('CUR WEEK' + PlayState.storyWeek);
 			LoadingState.loadAndSwitchState(new PlayState());
 		}
@@ -330,7 +295,18 @@ class FreeplayState extends MusicBeatState
 
 	}
 
-	
+	override function beatHit(){
+		super.beatHit();
+		
+		Pulse = .25;
+		updateIcons();
+
+		PulseTime.start(.05, function(PulseTime:FlxTimer){Pulse=0;updateIcons();} ,1);
+
+		trace('hit');
+
+
+	}
 
 
 	function changeSelection(change:Int = 0)
@@ -342,6 +318,8 @@ class FreeplayState extends MusicBeatState
 		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
+		
+
 		curSelected += change;
 
 		if (curSelected < 0)
@@ -350,6 +328,8 @@ class FreeplayState extends MusicBeatState
 			curSelected = 0;
 
 		// selector.y = (70 * curSelected) + 30;
+
+		updateIcons();
 
 		#if windows
 		 // Updating Discord Rich Presence
@@ -365,7 +345,7 @@ class FreeplayState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		updateIcons();
+		
 		
 
 		for (item in grpSongs.members)
@@ -387,34 +367,7 @@ class FreeplayState extends MusicBeatState
 		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 		trace(songs[curSelected].songName);
 
-		if(songsbpm[curSelected]!=null){
-			
-			if(PulseInterv.time!=60/songsbpm[curSelected].bpm){	
-
-				if(PulseInterv.active){
-					PulseInterv.active = false;
-				}
-
-				PulseInterv.start(60/songsbpm[curSelected].bpm, function(PulseInterv:FlxTimer){
-				
-				
-			
-
-					Pulse=.25;
-					updateIcons();
-					if(PulseTime.active){
-						PulseTime.active = false;
 		
-					}
-						
-					PulseTime.start(.05, function(PulseTime:FlxTimer){Pulse=0;updateIcons();} ,1);
-					
-			
-				}, 0);
-
-			}
-
-		}
 
 
 		//SONG = Song.loadFromJson(songs[curSelected].songName, songs[curSelected].songName); //tried this and entirely got rid of sound also heavy loading -Ghost

@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.ui.FlxUIDropDownMenu.FlxUIDropDownHeader;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
@@ -9,6 +10,7 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
@@ -46,6 +48,8 @@ class StoryMenuState extends MusicBeatState
 		['senpai', 'bf', 'gf']
 	];
 
+
+
 	var weekNames:Array<String> = [
 		"How to Funk",
 		"Daddy Dearest",
@@ -54,6 +58,16 @@ class StoryMenuState extends MusicBeatState
 		"MOMMY MUST MURDER",
 		"RED SNOW",
 		"Hating Simulator ft. Moawling"
+	];
+
+	var weekColors:Array<FlxColor> = [
+		0xFFF9CF51,
+		0xFFA62DCF,
+		0xFFB3B3B3,
+		0xFFA5FF85,
+		0xFFB00B69,
+		0xFFED4E4E,
+		0xFF58D2D6
 	];
 
 	var txtWeekTitle:FlxText;
@@ -71,6 +85,8 @@ class StoryMenuState extends MusicBeatState
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
+
+	var yellowBG:FlxSprite;
 
 	override function create()
 	{
@@ -104,7 +120,8 @@ class StoryMenuState extends MusicBeatState
 		rankText.screenCenter(X);
 
 		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
-		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
+		yellowBG = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400);
+		yellowBG.color = 0xFFF9CF51;
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
@@ -300,6 +317,7 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
+			PlayState.loadRep = false;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				LoadingState.loadAndSwitchState(new PlayState(), true);
@@ -367,6 +385,9 @@ class StoryMenuState extends MusicBeatState
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Story Mode Menu", "Currently selecting: Week " + curWeek + " (" + (curDifficulty==0 ? "Easy" : curDifficulty==1 ? "Normal" : curDifficulty==2 ? "Hard" : "") + ")");
 		#end
+
+		FlxTween.cancelTweensOf(yellowBG);
+		FlxTween.color(yellowBG, .5, yellowBG.color, weekColors[curWeek], {ease: FlxEase.linear});
 
 		for (item in grpWeekText.members)
 		{

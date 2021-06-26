@@ -1,5 +1,6 @@
 package;
 
+import openfl.display3D.textures.TextureBase;
 import Movement.EffectParams;
 import Movement.SpriteEffect;
 import flixel.addons.ui.interfaces.IEventGetter;
@@ -669,11 +670,15 @@ class ChartingState extends MusicBeatState
 
 					}
 				case 'All':	
-					curSelectedEffect.all = check.checked;
-					updateGrid();
+					if(curSelectedEffect != null){
+						curSelectedEffect.all = check.checked;
+						updateGrid();
+					}
 				case 'Set':
-					curSelectedEffect.set = check.checked;
-					updateGrid();
+					if(curSelectedEffect != null){
+						curSelectedEffect.set = check.checked;
+						updateGrid();
+					}
 			}
 		}
 		else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper))
@@ -704,37 +709,37 @@ class ChartingState extends MusicBeatState
 			}
 			else if(wname == 'effect_Length')
 			{
-				if (curSelectedEffect == null)
-					return;
+				if(curSelectedEffect != null){
 
-				if (nums.value <= 0)
-					nums.value = 0;
-				curSelectedEffect.duration = nums.value / 2000;
-				updateGrid();
+					if (nums.value <= 0)
+						nums.value = 0;
+					curSelectedEffect.duration = nums.value / 2000;
+					updateGrid();
+				}
 
 
 			}
 			else if(wname == 'effect_Quant')
 			{
-				if (curSelectedEffect == null)
-					return;
-				if(curSelectedEffect.target == 'alpha'){
-					curSelectedEffect.quantity = nums.value/1000;
-				}else{
-					curSelectedEffect.quantity = nums.value;
+				if(curSelectedEffect != null){
+					if(curSelectedEffect.target == 'alpha'){
+						curSelectedEffect.quantity = nums.value/1000;
+					}else{
+						curSelectedEffect.quantity = nums.value;
+					}
+					updateGrid();
 				}
-				updateGrid();
 
 			}
 			else if (wname == 'note_susLength')
 			{
-				if (curSelectedNote == null)
-					return;
+				if (curSelectedNote != null){
 
-				if (nums.value <= 0)
-					nums.value = 0;
-				curSelectedNote[2] = nums.value;
-				updateGrid();
+					if (nums.value <= 0)
+						nums.value = 0;
+					curSelectedNote[2] = nums.value;
+					updateGrid();
+				}
 			}
 			else if (wname == 'section_bpm')
 			{
@@ -989,7 +994,12 @@ class ChartingState extends MusicBeatState
 		if (FlxG.keys.justPressed.E)
 		{	
 			if(! effects.checked){
-				changeNoteSustain(Conductor.stepCrochet);
+				if(curSelectedNote != null){ 
+					if(curSelectedNote[0] < sectionStartTime() + (Conductor.stepCrochet) * (_song.notes[curSection].lengthInSteps - 1)){
+						curSelectedNote[0] += Conductor.stepCrochet;
+					}
+				}
+				updateGrid();
 			}else{
 				if(curSelectedEffect != null){ 	//i dont wanna make a function for this
 					
@@ -1007,7 +1017,12 @@ class ChartingState extends MusicBeatState
 		{	
 
 			if(! effects.checked){
-				changeNoteSustain(-Conductor.stepCrochet);
+				if(curSelectedNote != null){ 
+					if(curSelectedNote[0] > sectionStartTime()){
+						curSelectedNote[0] -= Conductor.stepCrochet;
+					}
+				}
+				updateGrid();
 			}else{
 				
 				if(curSelectedEffect != null){ 
@@ -1247,6 +1262,7 @@ class ChartingState extends MusicBeatState
 			
 			updateGrid();
 			updateSectionUI();
+			updateHeads();
 		}else{
 			
 			trace('bro wtf I AM NULL');
@@ -1507,7 +1523,9 @@ class ChartingState extends MusicBeatState
 				note.updateHitbox();
 				note.x = Math.floor(daNoteInfo  * GRID_SIZE);
 				note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
-
+				if(daNoteInfo >= 4){
+					note.player = true;
+				}
 				
 
 
@@ -1646,7 +1664,7 @@ class ChartingState extends MusicBeatState
 
 		for (i in _song.notes[curSection].sectionNotes)
 		{
-			if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+			if (i[0] == note.strumTime && i[1] % 4 == note.noteData && (i[1] >= 4 ? true : false) == note.player)
 			{
 				curSelectedNote = _song.notes[curSection].sectionNotes[swagNum];
 				trace('selected note: ', curSelectedNote);
@@ -1685,12 +1703,15 @@ class ChartingState extends MusicBeatState
 	function deleteNote(note:Note):Void
 		{
 			lastNote = note;
+			
 			for (i in _song.notes[curSection].sectionNotes)
 			{
-				if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
-				{
+				if (i[0] == note.strumTime && i[1] % 4 == note.noteData && (i[1] >= 4 ? true : false) == note.player)
+				{	
+					
 					_song.notes[curSection].sectionNotes.remove(i);
 				}
+
 			}
 	
 			updateGrid();
@@ -1736,15 +1757,23 @@ class ChartingState extends MusicBeatState
 
 	function easeUpdate(useless:String):Void{
 
-		curSelectedEffect.way = easeTypeDropDown.header.text.text + easeDirection.header.text.text;
-		updateGrid();
+		if(curSelectedEffect != null){
+
+			curSelectedEffect.way = easeTypeDropDown.header.text.text + easeDirection.header.text.text;
+			updateGrid();
+
+		}
 
 	}
 
 	function targetUpdate(useless:String):Void{
 
-		curSelectedEffect.target = modifierType.header.text.text;
-		updateGrid();
+		if(curSelectedEffect != null){
+
+			curSelectedEffect.target = modifierType.header.text.text;
+			updateGrid();
+
+		}
 
 	}
 
@@ -1757,7 +1786,8 @@ class ChartingState extends MusicBeatState
 			var noteData = Math.floor(FlxG.mouse.x / GRID_SIZE);
 			var noteSus = 0;
 			
-			trace(noteData);
+			
+
 			if(lockPos != null){
 				if(lockPos.checked){
 

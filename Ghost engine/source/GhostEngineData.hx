@@ -8,6 +8,9 @@ class GhostEngineData
         if (FlxG.save.data.newInput == null)
 			FlxG.save.data.newInput = true;
 
+		if (FlxG.save.data.downscroll == null)
+			FlxG.save.data.downscroll = false;
+
 		if(FlxG.save.data.dif == null)
 			FlxG.save.data.dif = 1;
 
@@ -72,6 +75,8 @@ class GhostEngineData
 
 
 		Conductor.recalculateTimings();
+		PlayerSettings.player1.controls.loadKeyBinds();
+		KeyBinds.keyCheck();
 
 		Main.watermarks = FlxG.save.data.watermark;
 

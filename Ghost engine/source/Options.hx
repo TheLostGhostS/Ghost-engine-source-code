@@ -72,7 +72,6 @@ class Option
 class DFJKOption extends Option
 {
 	private var controls:Controls;
-	private var Num:Int = FlxG.save.data.controls;
 
 	public function new(controls:Controls)
 	{
@@ -81,47 +80,39 @@ class DFJKOption extends Option
 	}
 
 	public override function press():Bool
+	{
+		OptionsMenu.instance.openSubState(new KeyBindMenu());
+		return false;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Key Bindings";
+	}
+}
+
+class DownscrollOption extends Option
+{
+
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
 	{	
 
-		if(Num != 2){
-			Num++;
-		}else{
-			Num=0;
-
-		}
-		FlxG.save.data.controls=Num;
-		
-		switch(FlxG.save.data.controls){
-			case 0:
-				controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-			case 1:
-				controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-			case 2:
-				controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-
-		}
-
-
+		FlxG.save.data.downscroll = !FlxG.save.data.downscroll;
 		display = updateDisplay();
 		return true;
 	}
 
 	private override function updateDisplay():String
 	{
-		switch(FlxG.save.data.controls){
-			
-			case 1:
-				return "DFJK";
-			case 2:
-				return "ASKL";
-			default:
-				return "WASD";
-
-		}
+		return "Downscroll " + (FlxG.save.data.downscroll ? "On": "Off");
 	}
 }
-
-
 
 
 
@@ -499,6 +490,64 @@ class ReplayOption extends Option
 		return "Load replays";
 	}
 }
+
+class InstantRep extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		
+	}
+
+	var songs:Array<FreeplayState.SongMetadata> = [];
+
+	public function getWeekNumbFromSong(songName:String):Int
+	{
+		var week:Int = 0;
+		for (i in 0...songs.length)
+		{
+			var pog:FreeplayState.SongMetadata = songs[i];
+			if (pog.songName.toLowerCase() == songName)
+				week = pog.week;
+		}
+		return week;
+	}
+	
+	public override function press():Bool
+	{	
+
+		
+
+		if(PlayState.canRep){
+
+			var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
+
+			for (i in 0...initSonglist.length)
+			{
+				var data:Array<String> = initSonglist[i].split(':');
+				songs.push(new FreeplayState.SongMetadata(data[0], Std.parseInt(data[2]), data[1]));
+			}
+
+			PlayState.loadRep = true;
+
+        	var poop:String = Highscore.formatSong(PlayState.rep.replay.songName.toLowerCase(), PlayState.rep.replay.songDiff);
+
+			PlayState.SONG = Song.loadFromJson(poop, PlayState.rep.replay.songName.toLowerCase());
+        	PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = PlayState.rep.replay.songDiff;
+			PlayState.storyWeek = getWeekNumbFromSong(PlayState.rep.replay.songName);
+        	LoadingState.loadAndSwitchState(new PlayState());
+		}
+		return false;
+	}
+
+	private override function updateDisplay():String
+	{	
+		return PlayState.canRep ? "Replay Last Level" : "Can't replay";
+	}
+}
+
+
 
 class AccuracyDOption extends Option
 {

@@ -15,13 +15,16 @@ import flixel.util.FlxColor;
 import lime.utils.Assets;
 
 class OptionsMenu extends MusicBeatState
-{
+{	
+	public static var instance:OptionsMenu;
+
 	var selector:FlxText;
 	var curSelected:Int = 0;
 
 	var options:Array<OptionCatagory> = [
 		new OptionCatagory("Gameplay", [
 			new DFJKOption(controls),
+			new DownscrollOption("Downscroll for the game"),
 			new DificultyOption("Set dificulty in general"),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
 			#if desktop
@@ -50,11 +53,19 @@ class OptionsMenu extends MusicBeatState
 			new FPSOption("Toggle the FPS Counter"),
 			new ReplayOption("View replays"),
 			#end
+			#if !desktop
+			
+			new InstantRep("Replay Last Level"),
+			
+
+			#end
 			new WatermarkOption("Turn off all watermarks from the engine.")
 			
 		])
 		
 	];
+
+	public var acceptInput:Bool = true;
 
 	private var currentDescription:String = "";
 	private var grpControls:FlxTypedGroup<Alphabet>;
@@ -63,7 +74,8 @@ class OptionsMenu extends MusicBeatState
 	var currentSelectedCat:OptionCatagory;
 
 	override function create()
-	{
+	{	
+		instance = this;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
 		menuBG.color = 0xFFea71fd;
