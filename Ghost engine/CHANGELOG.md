@@ -7,8 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Next version is gonna have compatibility with replay state and costumised keybinds
 (might also improve i little more the charting state to have features of the new fnf version)
 
+## [1.3]
+### [Added]
+- Now speed can be changed by section
+- Now individual notes can have different speeds from each other
+- Note spalshes
+- Added 2 types of notes
+- Fixed some little glitch on the movement
+
 ## [1.2.1]
-### [Changed]
+### [Added]
 - Added Replay to browser
 - Added downscroll option again and copatible with effects
 - Now Story Menu has colors :D
@@ -21,7 +29,7 @@ Next version is gonna have compatibility with replay state and costumised keybin
 
 
 ## [1.2]
-### [Changed]
+### [Added]
 - NEW EFFECTS, NOW LEVELS ARE TOTALLY COMPATIBLE WITH MOVEMENT YEEYYYY!!!!
 - Fixed a little more the hold notes (i think lol)
 - Option to desactivate effects on the menu

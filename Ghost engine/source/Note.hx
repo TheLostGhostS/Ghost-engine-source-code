@@ -23,6 +23,8 @@ class Note extends FlxSprite
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
+	public var noteType:Int;
+	public var noteSpeed:Float = 1;
 	public var prevNote:Note;
 	public var isDying:Bool = false;
 
@@ -39,13 +41,17 @@ class Note extends FlxSprite
 
 	public var player:Bool = false;
 
+	
+
+	private var lastSpeed:Float;
+
 	public var rating:String = "shit";
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?player:Bool = false)
+	public function new(strumTime:Float, noteData:Int, noteSpeed:Float = 1, noteType:Int = 0, ?prevNote:Note, ?sustainNote:Bool = false)
 	{
 		super();
 		if(PlayState.curStage != 'school' && PlayState.curStage != 'schoolEvil'){
-			PlayState.holdNoteHieght=Conductor.stepCrochet / 100 * (0.018 * PlayState.SONG.bpm * PlayState.SONG.speed * (PlayState.SONG.bpm * PlayState.SONG.bpm * .000050544 + PlayState.SONG.bpm * -.018736 + 2.202) );
+			PlayState.holdNoteHieght=Conductor.stepCrochet / 100 * (0.018 * PlayState.SONG.bpm * (PlayState.SONG.bpm * PlayState.SONG.bpm * .000050544 + PlayState.SONG.bpm * -.018736 + 2.202) );
 		}else{
 			PlayState.holdNoteHieght=Conductor.stepCrochet / 100 * 1.8;
 		}
@@ -55,11 +61,22 @@ class Note extends FlxSprite
 		this.prevNote = prevNote;
 
 		
-		this.player = player;
 
+		this.noteSpeed = noteSpeed;
+
+		this.noteType = noteType;
+		
+		if(this.noteSpeed < .5){
+			this.noteSpeed = 1;
+			noteSpeed = 1;
+
+		}
+		
 		
 		isSustainNote = sustainNote;
 		isDying = false;
+
+		lastSpeed = PlayState.lerpSpeed;
 
 		x += 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -87,6 +104,19 @@ class Note extends FlxSprite
 				animation.add('blueScroll', [5]);
 				animation.add('purpleScroll', [4]);
 
+				animation.add('fakegreenScroll', [26] );
+				animation.add('fakeredScroll', [27] );
+				animation.add('fakeblueScroll', [25] );
+				animation.add('fakepurpleScroll', [24] );
+
+				animation.add('chaingreenScroll', [22] );
+				animation.add('chainredScroll', [23] );
+				animation.add('chainblueScroll', [21] );
+				animation.add('chainpurpleScroll', [20] );
+
+
+
+
 				if (isSustainNote)
 				{
 					loadGraphic(Paths.image('weeb/pixelUI/arrowEnds'), true, 7, 6);
@@ -113,6 +143,16 @@ class Note extends FlxSprite
 				animation.addByPrefix('blueScroll', 'blue0');
 				animation.addByPrefix('purpleScroll', 'purple0');
 
+				animation.addByPrefix('fakegreenScroll', 'fakeGreen0');
+				animation.addByPrefix('fakeredScroll', 'fakeRed0');
+				animation.addByPrefix('fakeblueScroll', 'fakeBlue0');
+				animation.addByPrefix('fakepurpleScroll', 'fakePurple0');
+
+				animation.addByPrefix('chaingreenScroll', 'cGreen0');
+				animation.addByPrefix('chainredScroll', 'cRed0');
+				animation.addByPrefix('chainblueScroll', 'cBlue0');
+				animation.addByPrefix('chainpurpleScroll', 'cPurple0');
+
 				animation.addByPrefix('purpleholdend', 'pruple end hold');
 				animation.addByPrefix('greenholdend', 'green hold end');
 				animation.addByPrefix('redholdend', 'red hold end');
@@ -128,17 +168,53 @@ class Note extends FlxSprite
 				antialiasing = true;
 		}
 
-		switch (noteData)
-		{
-			case 0:
-				animation.play('purpleScroll');
+		switch(noteType){
+
 			case 1:
-				animation.play('blueScroll');
+
+				switch (noteData)
+				{
+					case 0:
+						animation.play('fakepurpleScroll');
+					case 1:
+						animation.play('fakeblueScroll');
+					case 2:
+						animation.play('fakegreenScroll');
+					case 3:
+						animation.play('fakeredScroll');
+				}
+
 			case 2:
-				animation.play('greenScroll');
-			case 3:
-				animation.play('redScroll');
+
+				switch (noteData)
+				{
+					case 0:
+						animation.play('chainpurpleScroll');
+					case 1:
+						animation.play('chainblueScroll');
+					case 2:
+						animation.play('chaingreenScroll');
+					case 3:
+						animation.play('chainredScroll');
+				}
+
+			default:
+
+				switch (noteData)
+				{
+					case 0:
+						animation.play('purpleScroll');
+					case 1:
+						animation.play('blueScroll');
+					case 2:
+						animation.play('greenScroll');
+					case 3:
+						animation.play('redScroll');
+				}
+
 		}
+
+		
 
 		// trace(prevNote);
 
@@ -172,6 +248,8 @@ class Note extends FlxSprite
 					
 			}
 
+			
+
 			//updateHitbox();
 
 			
@@ -198,7 +276,7 @@ class Note extends FlxSprite
 						
 				}
 
-					prevNote.scale.y *= PlayState.holdNoteHieght;
+					prevNote.scale.y *= PlayState.holdNoteHieght * PlayState.lerpSpeed * noteSpeed;
 
 					
 						
@@ -206,6 +284,8 @@ class Note extends FlxSprite
 				//prevNote.setGraphicSize();
 			}
 		}
+
+		
 	}
 
 	override function update(elapsed:Float)
@@ -269,10 +349,10 @@ class Note extends FlxSprite
 			}
 
 			
-			if(PlayState.auto){
+			if(PlayState.auto && noteType != 1){
 				
 
-				if (strumTime <= Conductor.songPosition && !isSustainNote){
+				if (strumTime <= Conductor.songPosition && !isSustainNote && noteType != 1){
 					wasGoodHit = true;
 					
 				} 
@@ -293,32 +373,51 @@ class Note extends FlxSprite
 		{
 
 			
-
-			canBeHit = false;
-			if(strumTime-300 <= Conductor.songPosition){
-				if(PlayState.daddance){
-					PlayState.daddance = false;
-				}
-				if(PlayState.dadstartdancin.active){
-					PlayState.dadstartdancin.active = false;
-				}
-			}
-
-			if (strumTime <= Conductor.songPosition && !isSustainNote){
-				wasGoodHit = true;
-				
-			}
-			if (strumTime - Conductor.songPosition < 250 / (PlayState.SONG.bpm/100) && isSustainNote){
-				wasGoodHit = true;
-				
-				
-			}
-
 			
+			canBeHit = false;
+			if(noteType != 1){
+				if(strumTime-300 <= Conductor.songPosition){
+					if(PlayState.daddance){
+						PlayState.daddance = false;
+					}
+					if(PlayState.dadstartdancin.active){
+						PlayState.dadstartdancin.active = false;
+					}
+				}
+
+				
+
+				if (strumTime <= Conductor.songPosition && !isSustainNote){
+					wasGoodHit = true;
+					
+				}
+				if (strumTime - Conductor.songPosition < 250 / (PlayState.SONG.bpm/100) && isSustainNote){
+					wasGoodHit = true;
+					
+					
+				}
+
+			}
+
+			if (strumTime < Conductor.songPosition - 100  && !wasGoodHit){
+				tooLate = true;
+			}
 
 
 
 		}
+
+		
+		if( isSustainNote && !animation.name.endsWith('end') ){
+
+			scale.y /= lastSpeed;
+
+			scale.y *= PlayState.lerpSpeed;
+
+			lastSpeed = PlayState.lerpSpeed;
+
+		}
+		
 
 		
 	}

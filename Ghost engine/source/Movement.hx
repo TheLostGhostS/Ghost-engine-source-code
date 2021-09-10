@@ -69,10 +69,6 @@ class Effect extends FlxBasic
         var options:TweenOptions;
         var translation:Null<EaseFunction>;
 
-        if(duration <= 0){
-            duration = 0.005;
-
-        }
 
         if(FlxG.save.data.downscroll && !all){
 
@@ -172,13 +168,18 @@ class Effect extends FlxBasic
                     
                    
                     prevStat = 0;
-                    
-                    FlxTween.num(0, quantity - (set ? PlayState.currentPositionX[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                    if(duration > 0){
 
-                        PlayState.currentPositionX[targetInt + playerAdd] += (adding - prevStat);
+                        FlxTween.num(0, quantity - (set ? PlayState.currentPositionX[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
 
-                        prevStat = adding;
-                    });
+                            PlayState.currentPositionX[targetInt + playerAdd] += (adding - prevStat);
+
+                            prevStat = adding;
+                        });
+                    }else{
+                        PlayState.currentPositionX[targetInt + playerAdd] += quantity - (set ? PlayState.currentPositionX[targetInt + playerAdd] : 0);
+
+                    }
 
                 }else{
 
@@ -196,13 +197,17 @@ class Effect extends FlxBasic
                     
                    
                         prevStat = 0;
-                    
-                        FlxTween.num(0, quantity - (set ? PlayState.currentPositionY[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                        if(duration > 0){
+                            FlxTween.num(0, quantity - (set ? PlayState.currentPositionY[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
 
-                            PlayState.currentPositionY[targetInt + playerAdd] += (adding - prevStat);
+                                PlayState.currentPositionY[targetInt + playerAdd] += (adding - prevStat);
 
-                            prevStat = adding;
-                        });
+                                prevStat = adding;
+                            });
+                        }else{
+                            PlayState.currentPositionY[targetInt + playerAdd] += quantity - (set ? PlayState.currentPositionY[targetInt + playerAdd] : 0);
+    
+                        }
                     
                     }else{
 
@@ -220,23 +225,28 @@ class Effect extends FlxBasic
                     
                    
                     prevStat = 0;
+                    if(duration > 0){
+                        FlxTween.num(0, quantity - (set ? PlayState.angle[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+
+                            PlayState.angle[targetInt + playerAdd] += (adding - prevStat);
+
+                            prevStat = adding;
+
+                            while(PlayState.angle[targetInt + playerAdd] > 360){
+                                PlayState.angle[targetInt + playerAdd] -= 360;
+
+                            }
+                            while(PlayState.angle[targetInt + playerAdd] < 0){
+                                PlayState.angle[targetInt + playerAdd] += 360;
+                            }
+
+
+                        });
+                    }else{
+                        PlayState.angle[targetInt + playerAdd] += quantity - (set ? PlayState.angle[targetInt + playerAdd] : 0);
+
+                    }
                     
-                    FlxTween.num(0, quantity - (set ? PlayState.angle[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
-
-                        PlayState.angle[targetInt + playerAdd] += (adding - prevStat);
-
-                        prevStat = adding;
-
-                        while(PlayState.angle[targetInt + playerAdd] > 360){
-                            PlayState.angle[targetInt + playerAdd] -= 360;
-
-                        }
-                        while(PlayState.angle[targetInt + playerAdd] < 0){
-                            PlayState.angle[targetInt + playerAdd] += 360;
-                        }
-
-
-                    });
 
                 }else{
 
@@ -254,23 +264,27 @@ class Effect extends FlxBasic
                     
                    
                     prevStat = 0;
-                      
-                    FlxTween.num(0, quantity - (set ? PlayState.angleC[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                    if(duration > 0){
+                        FlxTween.num(0, quantity - (set ? PlayState.angleC[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
 
-                        PlayState.angleC[targetInt + playerAdd] += (adding - prevStat);
+                            PlayState.angleC[targetInt + playerAdd] += (adding - prevStat);
 
-                        prevStat = adding;
+                            prevStat = adding;
 
-                        while(PlayState.angleC[targetInt + playerAdd] > 360){
-                            PlayState.angleC[targetInt + playerAdd] -= 360;
+                            while(PlayState.angleC[targetInt + playerAdd] > 360){
+                                PlayState.angleC[targetInt + playerAdd] -= 360;
 
-                        }
-                        while(PlayState.angleC[targetInt + playerAdd] < 0){
-                            PlayState.angleC[targetInt + playerAdd] += 360;
-                        }
+                            }
+                            while(PlayState.angleC[targetInt + playerAdd] < 0){
+                                PlayState.angleC[targetInt + playerAdd] += 360;
+                            }
 
 
-                    });
+                        });
+                    }else{
+                        PlayState.angleC[targetInt + playerAdd] += quantity - (set ? PlayState.angleC[targetInt + playerAdd] : 0);
+
+                    }
 
                 }else{
 
@@ -288,24 +302,27 @@ class Effect extends FlxBasic
                         
                        
                         prevStat = 0;
-                          
-                        FlxTween.num(0, quantity - (set ? PlayState.angleD[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                        if(duration > 0){
+                            FlxTween.num(0, quantity - (set ? PlayState.angleD[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+        
+                                PlayState.angleD[targetInt + playerAdd] += (adding - prevStat);
+        
+                                prevStat = adding;
+        
+                                while(PlayState.angleD[targetInt + playerAdd] > 360){
+                                    PlayState.angleD[targetInt + playerAdd] -= 360;
+        
+                                }
+                                while(PlayState.angleD[targetInt + playerAdd] < 0){
+                                    PlayState.angleD[targetInt + playerAdd] += 360;
+                                }
+        
+        
+                            });
+                        }else{
+                            PlayState.angleD[targetInt + playerAdd] += quantity - (set ? PlayState.angleD[targetInt + playerAdd] : 0);
     
-                            PlayState.angleD[targetInt + playerAdd] += (adding - prevStat);
-    
-                            prevStat = adding;
-    
-                            while(PlayState.angleD[targetInt + playerAdd] > 360){
-                                PlayState.angleD[targetInt + playerAdd] -= 360;
-    
-                            }
-                            while(PlayState.angleD[targetInt + playerAdd] < 0){
-                                PlayState.angleD[targetInt + playerAdd] += 360;
-                            }
-    
-    
-                        });
-    
+                        }
                     }else{
     
                         for(newTarget in 0...4){
@@ -322,15 +339,19 @@ class Effect extends FlxBasic
                             
                            
                             prevStat = 0;
-                              
-                            FlxTween.num(0, quantity - (set ? PlayState.orbit[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                            if(duration > 0){
+                                FlxTween.num(0, quantity - (set ? PlayState.orbit[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+            
+                                    PlayState.orbit[targetInt + playerAdd] += (adding - prevStat);
+            
+                                    prevStat = adding;
+            
+            
+                                });
+                            }else{
+                                PlayState.orbit[targetInt + playerAdd] += quantity - (set ? PlayState.orbit[targetInt + playerAdd] : 0);
         
-                                PlayState.orbit[targetInt + playerAdd] += (adding - prevStat);
-        
-                                prevStat = adding;
-        
-        
-                            });
+                            }
         
                         }else{
         
@@ -348,23 +369,27 @@ class Effect extends FlxBasic
                                 
                                
                                 prevStat = 0;
-                                  
-                                FlxTween.num(0, quantity - (set ? PlayState.alpha[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
-            
-                                    PlayState.alpha[targetInt + playerAdd] += (adding - prevStat);
-            
-                                    prevStat = adding;
+                                if(duration > 0){
+                                    FlxTween.num(0, quantity - (set ? PlayState.alpha[targetInt + playerAdd] : 0), duration, options, function(adding:Float){
+                
+                                        PlayState.alpha[targetInt + playerAdd] += (adding - prevStat);
+                
+                                        prevStat = adding;
 
-                                    if(PlayState.alpha[targetInt + playerAdd] > 1){
-                                        PlayState.alpha[targetInt + playerAdd] = 1;
+                                        if(PlayState.alpha[targetInt + playerAdd] > 1){
+                                            PlayState.alpha[targetInt + playerAdd] = 1;
+                
+                                        }
+                                        if(PlayState.alpha[targetInt + playerAdd] < 0){
+                                            PlayState.alpha[targetInt + playerAdd] = 0;
+                                        }
+                
+                
+                                    });
+                                }else{
+                                    PlayState.alpha[targetInt + playerAdd] += quantity - (set ? PlayState.alpha[targetInt + playerAdd] : 0);
             
-                                    }
-                                    if(PlayState.alpha[targetInt + playerAdd] < 0){
-                                        PlayState.alpha[targetInt + playerAdd] = 0;
-                                    }
-            
-            
-                                });
+                                }
             
                             }else{
             
@@ -382,7 +407,7 @@ class Effect extends FlxBasic
 
         }
 
-        
+         
 
 
 

@@ -72,7 +72,17 @@ class GhostEngineData
 		if (FlxG.save.data.watermark == null)
 			FlxG.save.data.watermark = true;
 
+		if(FlxG.save.data.notePrefab == null)
+			FlxG.save.data.notePrefab = [];
 
+		if(FlxG.save.data.effectPrefab == null)
+			FlxG.save.data.effectPrefab = [];
+
+		if(FlxG.save.data.prefabNote == null)
+			FlxG.save.data.prefabNote = 0;
+
+		if(FlxG.save.data.prefabEffect == null)
+			FlxG.save.data.prefabEffect = 0;
 
 		Conductor.recalculateTimings();
 		PlayerSettings.player1.controls.loadKeyBinds();

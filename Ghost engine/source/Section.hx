@@ -15,6 +15,7 @@ typedef SwagSection =
 	var altAnim:Bool;
 	var spawn:Float;
 	var effects:Array<EffectParams>;
+	var sectionSpeed:Float;
 }
 
 

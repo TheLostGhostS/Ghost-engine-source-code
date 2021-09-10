@@ -414,7 +414,7 @@ class TitleState extends MusicBeatState
 					createCoolText(['In Partnership', 'with']);
 			case 7:
 				if (Main.watermarks)
-					addMoreText('Ghost 4420576');
+					addMoreText("Ghost 4420576");
 				else
 				{
 					addMoreText('Newgrounds');
